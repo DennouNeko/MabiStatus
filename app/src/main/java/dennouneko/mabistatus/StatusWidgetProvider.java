@@ -7,6 +7,7 @@ import android.os.*;
 import android.widget.*;
 import android.app.*;
 import java.util.*;
+import android.view.*;
 
 public class StatusWidgetProvider extends AppWidgetProvider
 {
@@ -34,5 +35,9 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			
 			appWidgetManager.updateAppWidget(widgetId, remoteViews);
 		}
+	}
+	
+	public void showMain(View v)
+	{
 	}
 }
