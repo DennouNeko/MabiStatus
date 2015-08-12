@@ -8,8 +8,8 @@
 		android:layout_height="wrap_content"
 		android:background="@drawable/mabisign" 
 		android:gravity="center_horizontal" 
-		android:clickable="true"
-		android:onClick="showMain" >
+		android:id="@+id/widget_content"
+		android:clickable="true" >
 			<TextView
 				android:id="@+id/status_patch"
 				android:text="\?"

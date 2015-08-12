@@ -11,7 +11,6 @@ import android.view.*;
 
 public class StatusWidgetProvider extends AppWidgetProvider
 {
-
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
 	{
@@ -25,19 +24,13 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			// TODO: update remoteViews
 			remoteViews.setTextViewText(R.id.status_patch, String.valueOf(number));
 			
-			Intent intent = new Intent(context, StatusWidgetProvider.class);
-			intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-			intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+			Intent intent = new Intent(context, MainActivity.class);
 			
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 			
-			remoteViews.setOnClickPendingIntent(R.id.layout, pendingIntent);
+			remoteViews.setOnClickPendingIntent(R.id.widget_content, pendingIntent);
 			
 			appWidgetManager.updateAppWidget(widgetId, remoteViews);
 		}
-	}
-	
-	public void showMain(View v)
-	{
 	}
 }
