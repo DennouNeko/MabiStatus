@@ -28,7 +28,6 @@ public class StatusWidgetProvider extends AppWidgetProvider
 	
 	public static class UpdateService extends Service
 	{
-
 		@Override
 		public void onStart(Intent intent, int startId)
 		{
@@ -47,16 +46,17 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			
 			updateViews = new RemoteViews(context.getPackageName(), R.layout.status_appwidget);
 			
-			int num1 = (new Random().nextInt(100));
-			int num2 = (new Random().nextInt(100));
-			
-			updateViews.setTextViewText(R.id.status_launcher, String.valueOf(num1));
-			updateViews.setTextViewText(R.id.status_patch, String.valueOf(num2));
+			int scode = (new Random().nextInt(3));
+			String sval = context.getResources().getText(R.string.status_offline).toString();
+			if(scode == 1)
+				sval = context.getResources().getText(R.string.status_maint).toString();
+			else if(scode == 2)
+				sval = context.getResources().getText(R.string.status_online).toString();
+		
+			updateViews.setTextViewText(R.id.status_login, sval);
 
 			Intent intent = new Intent(context, MainActivity.class);
-
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-
 			updateViews.setOnClickPendingIntent(R.id.widget_content, pendingIntent);
 			
 			return updateViews;
