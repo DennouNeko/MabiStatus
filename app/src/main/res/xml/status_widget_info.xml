@@ -4,6 +4,5 @@
 	android:minWidth="40dp"
 	android:minHeight="40dp"
 	android:updatePeriodMillis="300000"
-	android:initialLayout="@layout/status_appwidget"
-	>
+	android:initialLayout="@layout/widget_loading" >
 </appwidget-provider>

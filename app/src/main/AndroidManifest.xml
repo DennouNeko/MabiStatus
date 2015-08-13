@@ -19,6 +19,8 @@
 			</intent-filter>
 			<meta-data android:name="android.appwidget.provider" android:resource="@xml/status_widget_info" />
 		</receiver>
+		
+		<service android:name=".StatusWidgetProvider$UpdateService" />
     </application>
 	
 	<uses-permission android:name="android.permission.INTERNET" />
