@@ -7,15 +7,18 @@ import org.apache.http.client.methods.*;
 import java.io.*;
 import org.apache.http.entity.*;
 import java.lang.annotation.*;
+import android.net.*;
+import android.app.*;
+import java.net.*;
+import android.util.*;
+import java.nio.*;
 
 public class MyHTTP
 {
 	private static MyHTTP mInstance;
-	private HttpClient mClient;
 	
 	private MyHTTP()
 	{
-		mClient = new DefaultHttpClient();
 	}
 	
 	public static MyHTTP getInstance()
@@ -27,18 +30,61 @@ public class MyHTTP
 		return mInstance;
 	}
 	
-	public String get(String url) throws ClientProtocolException, IOException
+	public String getData(String src) throws ClientProtocolException, IOException
 	{
-		HttpResponse resp = mClient.execute(new HttpGet(url));
-		StatusLine sline = resp.getStatusLine();
-		if(sline.getStatusCode() == HttpStatus.SC_OK)
+		InputStream is = null;
+		try
 		{
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			resp.getEntity().writeTo(out);
-			String ret = out.toString();
-			out.close();
+			Log.d("MabiStatus", "Starting request");
+			URL url = new URL(src);
+			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+			Log.d("MabiStatus", "Setting up params");
+			conn.setReadTimeout(10000);
+			conn.setConnectTimeout(15000);
+			conn.setRequestMethod("GET");
+			conn.setDoInput(true);
+			// start of query
+			Log.d("MabiStatus", "Sending query");
+			conn.connect();
+			int code = conn.getResponseCode();
+			
+			Log.d("MabiStatus", "Response code: " + code);
+			is = conn.getInputStream();
+			
+			String ret = readIt(is, -1);
 			return ret;
 		}
-		return "";
+		finally
+		{
+			if(is != null)
+			{
+				is.close();
+				is = null;
+			}
+		}
+	}
+	
+	public String readIt(InputStream is, int len) throws IOException, UnsupportedEncodingException
+	{
+		Reader reader = null;
+		reader = new InputStreamReader(is, "UTF-8");
+		if(len < 0)
+		{
+			StringBuffer out = new StringBuffer();
+			char[] buffer = new char[1024];
+			for(;;)
+			{
+				int rds = reader.read(buffer, 0, buffer.length);
+				if(rds < 0) break;
+				out.append(buffer, 0, rds);
+			}
+			return out.toString();
+		}
+		else
+		{
+			char[] buf = new char[len];
+			reader.read(buf);
+			return new String(buf);
+		}
 	}
 }

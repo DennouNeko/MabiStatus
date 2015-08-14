@@ -10,63 +10,97 @@ import java.util.*;
 import android.view.*;
 import android.widget.RemoteViewsService.*;
 import android.widget.RemoteViews.*;
+import org.apache.http.client.*;
+import java.io.*;
+import junit.framework.*;
+import android.net.*;
+import android.util.*;
 
 public class StatusWidgetProvider extends AppWidgetProvider
 {
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
 	{
-		context.startService(new Intent(context, UpdateService.class));
+		String url = "http://php-dennouneko.rhcloud.com/proxy.php?type=patch";
 		
-		/* RemoteViews updateViews = UpdateService.buildUpdate(context);
-
-		// push the update to home screen
-		ComponentName thisWidget = new ComponentName(context, StatusWidgetProvider.class);
-		AppWidgetManager manager = AppWidgetManager.getInstance(context);
-		manager.updateAppWidget(thisWidget, updateViews); //*/
+		Log.d("StatusWidgetProvider", "onUpdate");
+		new MyTask(context).execute(url);
 	}
 	
-	public static class UpdateService extends Service
+	private static class MyTask extends AsyncTask<String, Void, String>
 	{
-		@Override
-		public void onStart(Intent intent, int startId)
+		Context mCtx;
+		public MyTask(Context ctx)
 		{
-			// build the update
-			RemoteViews updateViews = buildUpdate(this);
-			
-			// push the update to home screen
-			ComponentName thisWidget = new ComponentName(this, StatusWidgetProvider.class);
-			AppWidgetManager manager = AppWidgetManager.getInstance(this);
-			manager.updateAppWidget(thisWidget, updateViews);
+			mCtx = ctx;
 		}
-		
-		public static RemoteViews buildUpdate(Context context)
-		{
-			RemoteViews updateViews = null;
-			
-			updateViews = new RemoteViews(context.getPackageName(), R.layout.status_appwidget);
-			
-			int scode = (new Random().nextInt(3));
-			String sval = context.getResources().getText(R.string.status_offline).toString();
-			if(scode == 1)
-				sval = context.getResources().getText(R.string.status_maint).toString();
-			else if(scode == 2)
-				sval = context.getResources().getText(R.string.status_online).toString();
-		
-			updateViews.setTextViewText(R.id.status_login, sval);
 
-			Intent intent = new Intent(context, MainActivity.class);
-			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+		@Override
+		protected String doInBackground(String[] p1)
+		{
+			String ret = "";
+			if(MainActivity.isConnected(mCtx))
+			{
+			try
+			{
+				ret = MyHTTP.getInstance().getData(p1[0]);
+			}
+			catch(ClientProtocolException e)
+			{
+				ret = "CPE:" + e.getMessage();
+			}
+			catch(IOException e)
+			{
+				ret = "IO:" + e.getMessage();
+			}//*/
+			}
+			else
+			{
+				Log.d("StatusWidgetProvider", "Not connected!");
+				ret = "Net";
+			}//*/
+			return ret;
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			String parts[] = result.split("\n");
+			HashMap<String, String> data = new HashMap<String, String>();
+			
+			for(String line : parts)
+			{
+				String pt[] = line.trim().split("=", 2);
+				if(pt.length > 1) data.put(pt[0], pt[1]);
+			}
+			
+			String resultText = mCtx.getResources().getText(R.string.status_offline).toString();
+			Log.d("StatusWidgetProvider", "Response:\n" + result);
+			
+			String patchAccept = data.get("patch_accept");
+			Log.d("StatusWidgetProvider", "patch_accept = " + patchAccept);
+			if(patchAccept.compareTo("0") == 0)
+			{
+				Log.d("StatusWidgetProvider", "0");
+				resultText = mCtx.getResources().getText(R.string.status_maint).toString();
+			}
+			else if(patchAccept.compareTo("1") == 0)
+			{
+				Log.d("StatusWidgetProvider", "1");
+				resultText = mCtx.getResources().getText(R.string.status_online).toString();
+			}
+			
+			RemoteViews updateViews = new RemoteViews(mCtx.getPackageName(), R.layout.status_appwidget);
+			updateViews.setTextViewText(R.id.status_login, resultText);
+
+			Intent intent = new Intent(mCtx, MainActivity.class);
+			PendingIntent pendingIntent = PendingIntent.getActivity(mCtx, 0, intent, 0);
 			updateViews.setOnClickPendingIntent(R.id.widget_content, pendingIntent);
 			
-			return updateViews;
-		}
-
-		@Override
-		public IBinder onBind(Intent p1)
-		{
-			// no need to bind to this service
-			return null;
+			// push the update to home screen
+			ComponentName thisWidget = new ComponentName(mCtx, StatusWidgetProvider.class);
+			AppWidgetManager manager = AppWidgetManager.getInstance(mCtx);
+			manager.updateAppWidget(thisWidget, updateViews);
 		}
 	}
 }

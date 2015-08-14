@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MabiStatus</string>
+	<string name="widget_name">MabiWidget</string>
     <string name="hello_world">Hello world!</string>
 	<string name="status_offline">Offline</string>
 	<string name="status_maint">Maint</string>
