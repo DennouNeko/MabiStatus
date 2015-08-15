@@ -15,16 +15,23 @@ import java.io.*;
 import junit.framework.*;
 import android.net.*;
 import android.util.*;
+import android.nfc.*;
 
 public class StatusWidgetProvider extends AppWidgetProvider
 {
+	private static final String tag = "StstusWidgetProvider";
+	private static final String patch_url = "http://php-dennouneko.rhcloud.com/proxy.php?type=patch";
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
 	{
-		String url = "http://php-dennouneko.rhcloud.com/proxy.php?type=patch";
-		
-		Log.d("StatusWidgetProvider", "onUpdate");
-		new MyTask(context).execute(url);
+		Log.v(tag, "onUpdate");
+		new MyTask(context).execute(patch_url);
+	}
+	
+	public static void updateAllWidgets(Context ctx)
+	{
+		Log.v(tag, "Forcing widget update");
+		new MyTask(ctx).execute(patch_url);
 	}
 	
 	private static class MyTask extends AsyncTask<String, Void, String>
@@ -56,7 +63,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			}
 			else
 			{
-				Log.d("StatusWidgetProvider", "Not connected!");
+				Log.d(tag, "Not connected!");
 				ret = "Net";
 			}//*/
 			return ret;
@@ -75,19 +82,20 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			}
 			
 			String resultText = mCtx.getResources().getText(R.string.status_offline).toString();
-			Log.d("StatusWidgetProvider", "Response:\n" + result);
+			Log.v(tag, "Response:\n" + result);
 			
 			String patchAccept = data.get("patch_accept");
-			Log.d("StatusWidgetProvider", "patch_accept = " + patchAccept);
-			if(patchAccept.compareTo("0") == 0)
+			if(patchAccept != null)
 			{
-				Log.d("StatusWidgetProvider", "0");
-				resultText = mCtx.getResources().getText(R.string.status_maint).toString();
-			}
-			else if(patchAccept.compareTo("1") == 0)
-			{
-				Log.d("StatusWidgetProvider", "1");
-				resultText = mCtx.getResources().getText(R.string.status_online).toString();
+				Log.d(tag, "patch_accept = " + patchAccept);
+				if(patchAccept.equals("0"))
+				{
+					resultText = mCtx.getResources().getText(R.string.status_maint).toString();
+				}
+				else if(patchAccept.equals("1"))
+				{
+					resultText = mCtx.getResources().getText(R.string.status_online).toString();
+				}
 			}
 			
 			RemoteViews updateViews = new RemoteViews(mCtx.getPackageName(), R.layout.status_appwidget);
