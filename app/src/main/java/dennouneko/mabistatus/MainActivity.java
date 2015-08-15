@@ -18,6 +18,28 @@ public class MainActivity extends Activity
 		setContentView(R.layout.main);
         updateContent();
     }
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch(item.getItemId())
+		{
+			case R.id.menu_refresh:
+				updateContent();
+				return true;
+			case R.id.menu_refresh_widget:
+				StatusWidgetProvider.updateAllWidgets(this);
+				return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		getMenuInflater().inflate(R.menu.main, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
 	
 	public static boolean isConnected(Context ctx)
 	{
@@ -43,12 +65,5 @@ public class MainActivity extends Activity
 	{
 		TextView t = (TextView)findViewById(R.id.message);
 		t.setText(isConnected(this) ? (isMobile(this) ? "Mobile" : "Online") : "Offline");
-	}
-	
-	public void updateWidget(View view)
-	{
-		Log.v(tag, "updateWidget");
-		updateContent();
-		StatusWidgetProvider.updateAllWidgets(this);
 	}
 }
