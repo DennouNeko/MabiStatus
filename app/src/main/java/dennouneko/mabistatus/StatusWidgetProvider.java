@@ -20,21 +20,20 @@ import android.nfc.*;
 public class StatusWidgetProvider extends AppWidgetProvider
 {
 	private static final String tag = "StstusWidgetProvider";
-	private static final String patch_url = "http://php-dennouneko.rhcloud.com/proxy.php?type=patch";
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
 	{
 		Log.v(tag, "onUpdate");
-		new MyTask(context).execute(patch_url);
+		new MyTask(context).execute();
 	}
 	
 	public static void updateAllWidgets(Context ctx)
 	{
 		Log.v(tag, "Forcing widget update");
-		new MyTask(ctx).execute(patch_url);
+		new MyTask(ctx).execute();
 	}
 	
-	private static class MyTask extends AsyncTask<String, Void, String>
+	private static class MyTask extends AsyncTask<Void, Void, Integer>
 	{
 		Context mCtx;
 		public MyTask(Context ctx)
@@ -43,60 +42,41 @@ public class StatusWidgetProvider extends AppWidgetProvider
 		}
 
 		@Override
-		protected String doInBackground(String[] p1)
+		protected Integer doInBackground(Void[] param)
 		{
-			String ret = "";
+			int patch = 0;
+			int login = 0;
+			
 			if(MainActivity.isConnected(mCtx))
 			{
-			try
-			{
-				ret = MyHTTP.getInstance().getData(p1[0]);
-			}
-			catch(ClientProtocolException e)
-			{
-				ret = "CPE:" + e.getMessage();
-			}
-			catch(IOException e)
-			{
-				ret = "IO:" + e.getMessage();
-			}//*/
+				MyHTTP http = MyHTTP.getInstance();
+				patch = http.getPatchStatus(mCtx) & 0x0f;
+				login = 2; // For now pretend it's online
 			}
 			else
 			{
 				Log.d(tag, "Not connected!");
-				ret = "Net";
 			}//*/
-			return ret;
+			return patch | (login << 4);
 		}
 
 		@Override
-		protected void onPostExecute(String result)
+		protected void onPostExecute(Integer result)
 		{
-			String parts[] = result.split("\n");
-			HashMap<String, String> data = new HashMap<String, String>();
+			Log.v(tag, "onPostExecute(" + Integer.toHexString(result) + ")");
+			int res = R.string.status_offline;
+			int patch = (result >> 0) & 0x0f;
+			int login = (result >> 4) & 0x0f;
 			
-			for(String line : parts)
+			if((login > 0 && patch == 1) || (patch > 0 && login == 1))
 			{
-				String pt[] = line.trim().split("=", 2);
-				if(pt.length > 1) data.put(pt[0], pt[1]);
+				res = R.string.status_maint;
 			}
-			
-			String resultText = mCtx.getResources().getText(R.string.status_offline).toString();
-			Log.v(tag, "Response:\n" + result);
-			
-			String patchAccept = data.get("patch_accept");
-			if(patchAccept != null)
+			else if(patch == 2 && login == 2)
 			{
-				Log.d(tag, "patch_accept = " + patchAccept);
-				if(patchAccept.equals("0"))
-				{
-					resultText = mCtx.getResources().getText(R.string.status_maint).toString();
-				}
-				else if(patchAccept.equals("1"))
-				{
-					resultText = mCtx.getResources().getText(R.string.status_online).toString();
-				}
+				res = R.string.status_online;
 			}
+			String resultText = mCtx.getResources().getText(res).toString();
 			
 			RemoteViews updateViews = new RemoteViews(mCtx.getPackageName(), R.layout.status_appwidget);
 			updateViews.setTextViewText(R.id.status_login, resultText);
