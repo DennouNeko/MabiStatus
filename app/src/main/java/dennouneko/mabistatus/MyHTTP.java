@@ -20,6 +20,7 @@ public class MyHTTP
 	private static MyHTTP mInstance;
 	private static final String tag = "MyHTTP";
 	private static final String urlPatch = "http://php-dennouneko.rhcloud.com/proxy.php?type=patch";
+	private static final String urlDaily = "http://php-dennouneko.rhcloud.com/proxy.php?type=daily";
 	
 	private MyHTTP()
 	{
@@ -145,5 +146,12 @@ public class MyHTTP
 	public int getLoginStatus(Context ctx)
 	{
 		return 2; // For now pretend it's online
+	}
+	
+	public Map<String, String> getDailyInfo(Context ctx)
+	{
+		Map<String, String> ret = new HashMap<String, String>();
+		
+		return ret;
 	}
 }
