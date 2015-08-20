@@ -18,8 +18,19 @@
         		android:layout_width="wrap_content"
         		android:layout_height="wrap_content" />
 		</LinearLayout>
-		<TextView
+		<LinearLayout
 			android:layout_below="@+id/box_message"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/daily_today_header"
+			android:gravity="center_horizontal" >
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/daily_today_header"/>
+		</LinearLayout>
+		<TextView
+			android:layout_below="@+id/daily_today_header"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:background="@drawable/menu"
@@ -44,8 +55,19 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/daily_today_tail_content"
 			android:visibility="gone"/>
-		<TextView
+		<LinearLayout
 			android:layout_below="@+id/daily_today_tail_content"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/daily_tomorrow_header"
+			android:gravity="center_horizontal">
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/daily_tomorrow_header"/>
+		</LinearLayout>
+		<TextView
+			android:layout_below="@+id/daily_tomorrow_header"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:background="@drawable/menu"
