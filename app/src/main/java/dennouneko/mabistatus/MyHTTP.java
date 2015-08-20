@@ -141,4 +141,9 @@ public class MyHTTP
 		
 		return ret;
 	}
+	
+	public int getLoginStatus(Context ctx)
+	{
+		return 2; // For now pretend it's online
+	}
 }

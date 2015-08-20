@@ -51,7 +51,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			{
 				MyHTTP http = MyHTTP.getInstance();
 				patch = http.getPatchStatus(mCtx) & 0x0f;
-				login = 2; // For now pretend it's online
+				login = http.getLoginStatus(mCtx) & 0x0f;
 			}
 			else
 			{
