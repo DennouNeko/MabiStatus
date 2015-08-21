@@ -32,7 +32,8 @@ public class MainActivity extends Activity
 		noti.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
 		noti.setAutoCancel(true);
 		
-		Intent showIntent = new Intent(ctx, MainActivity.class);
+		// Intent showIntent = new Intent(ctx, MainActivity.class);
+		Intent showIntent = new Intent();
 		PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0, showIntent, 0);
 		
 		noti.setContentIntent(contentIntent);
