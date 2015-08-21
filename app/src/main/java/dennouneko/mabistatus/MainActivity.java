@@ -147,6 +147,6 @@ public class MainActivity extends Activity
 	public void updateContent()
 	{
 		TextView t = (TextView)findViewById(R.id.message);
-		t.setText(isConnected(this) ? (isMobile(this) ? "Mobile" : "Online") : "Offline");
+		t.setText(isConnected(this) ? (isMobile(this) ? "Mobile" : "Wideband") : "Disconnected");
 	}
 }
