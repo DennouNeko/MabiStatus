@@ -24,19 +24,21 @@ public class StatusWidgetProvider extends AppWidgetProvider
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
 	{
 		Log.v(tag, "onUpdate");
-		new MyTask(context).execute();
+		new WidgetUpdater(context).execute();
 	}
 	
 	public static void updateAllWidgets(Context ctx)
 	{
 		Log.v(tag, "Forcing widget update");
-		new MyTask(ctx).execute();
+		new WidgetUpdater(ctx).execute();
 	}
 	
-	private static class MyTask extends AsyncTask<Void, Void, Integer>
+	private static class WidgetUpdater extends AsyncTask<Void, Void, Integer>
 	{
-		Context mCtx;
-		public MyTask(Context ctx)
+		private Context mCtx;
+		private static final String tag = "StatusWidgetProvider$WidgetUpdater";
+		
+		public WidgetUpdater(Context ctx)
 		{
 			mCtx = ctx;
 		}
