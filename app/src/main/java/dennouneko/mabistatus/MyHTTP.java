@@ -14,6 +14,7 @@ import android.util.*;
 import java.nio.*;
 import android.content.*;
 import java.util.*;
+import org.json.*;
 
 public class MyHTTP
 {
@@ -148,9 +149,37 @@ public class MyHTTP
 		return 2; // For now pretend it's online
 	}
 	
-	public Map<String, String> getDailyInfo(Context ctx)
+	public JSONObject getDailyInfo(Context ctx)
 	{
-		Map<String, String> ret = new HashMap<String, String>();
+		String result = "";
+		JSONObject ret = null;
+		
+		try
+		{
+			try
+			{
+				result = getData(urlDaily);
+			}
+			catch(ClientProtocolException e)
+			{
+				ret = new JSONObject();
+				ret.accumulate("error", e.getMessage());
+				return ret;
+			}
+			catch(IOException e)
+			{
+				ret = new JSONObject();
+				ret.accumulate("error", e.getMessage());
+				return ret;
+			}
+			
+			ret = new JSONObject(result);
+			ret.accumulate("result", result);
+		}
+		catch(JSONException e)
+		{
+			e.printStackTrace();
+		}
 		
 		return ret;
 	}

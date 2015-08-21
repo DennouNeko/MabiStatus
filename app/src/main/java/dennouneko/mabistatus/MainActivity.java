@@ -9,6 +9,8 @@ import android.view.*;
 import android.widget.*;
 import android.media.*;
 import android.view.View.*;
+import java.util.*;
+import org.json.*;
 
 public class MainActivity extends Activity 
 {
@@ -147,6 +149,89 @@ public class MainActivity extends Activity
 	public void updateContent()
 	{
 		TextView t = (TextView)findViewById(R.id.message);
-		t.setText(isConnected(this) ? (isMobile(this) ? "Mobile" : "Wideband") : "Disconnected");
+		// t.setText(isConnected(this) ? (isMobile(this) ? "Mobile" : "Wideband") : "Disconnected");
+		(new MainUpdater(this)).execute();
+	}
+	
+	private class MainUpdater extends AsyncTask<Void, Void, JSONObject >
+	{
+		private Context mCtx;
+		private static final String tag = "MainActivity$MainUpdater";
+
+		@Override
+		protected void onPreExecute()
+		{
+			TextView t = (TextView)findViewById(R.id.message);
+			t.setVisibility(View.VISIBLE);
+			t.setText(R.string.message_loading);
+		}
+		
+		public MainUpdater(Context ctx)
+		{
+			mCtx = ctx;
+		}
+		
+		@Override
+		protected JSONObject doInBackground(Void[] p1)
+		{
+			JSONObject data = null;
+			
+			if(isConnected(mCtx))
+			{
+				MyHTTP http = MyHTTP.getInstance();
+				data = http.getDailyInfo(mCtx);
+			}
+			else
+			{
+				Log.d(tag, "No connected!");
+			}
+			return data;
+		}
+		
+		@Override
+		protected void onPostExecute(JSONObject result)
+		{
+			TextView t = (TextView)findViewById(R.id.message);
+			try
+			{
+				if(result != null)
+				{
+					// t.setText(result.getString("result"));
+					if(result.isNull("error"))
+					{
+						// t.setVisibility(View.GONE);
+						t.setText(result.getString("date"));
+						if(!result.isNull("today"))
+						{
+							JSONObject daily = (JSONObject)result.get("today");
+							JSONObject tara = (JSONObject)daily.get("Tara");
+							JSONObject tail = (JSONObject)daily.get("Taillteann");
+							((TextView)findViewById(R.id.daily_today_tara)).setText(tara.getString("Normal"));
+							((TextView)findViewById(R.id.daily_today_tail)).setText(tail.getString("Normal"));
+						}
+						if(!result.isNull("tomorrow"))
+						{
+							JSONObject daily = (JSONObject)result.get("tomorrow");
+							JSONObject tara = (JSONObject)daily.get("Tara");
+							JSONObject tail = (JSONObject)daily.get("Taillteann");
+							((TextView)findViewById(R.id.daily_tomorrow_tara)).setText(tara.getString("Normal"));
+							((TextView)findViewById(R.id.daily_tomorrow_tail)).setText(tail.getString("Normal"));
+						}
+					}
+					else
+					{
+						t.setText(result.getString("error"));
+					}
+				}
+				else
+				{
+					t.setText("Offline");
+				}
+			}
+			catch(JSONException e)
+			{
+				t.setText(e.getMessage());
+			}
+		}
 	}
 }
