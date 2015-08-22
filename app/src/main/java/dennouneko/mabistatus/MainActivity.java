@@ -254,10 +254,10 @@ public class MainActivity extends Activity
 			TextView rank = new TextView(mCtx);
 			hdr.addView(rank);
 			TextView gold = new TextView(mCtx);
-			gold.setText("Gold");
+			gold.setText(" Gold");
 			hdr.addView(gold);
 			TextView exp = new TextView(mCtx);
-			exp.setText("EXP");
+			exp.setText(" EXP");
 			hdr.addView(exp);
 			rewards.addView(hdr);
 			for(int i = 0; i < 5; i++)
@@ -277,14 +277,17 @@ public class MainActivity extends Activity
 				rank.setText(diff);
 				row.addView(rank);
 				
+				// TODO: Figure out a nice way to add cell padding
 				gold = new TextView(mCtx);
-				gold.setText(String.valueOf(data.getGold(i)));
+				gold.setText(" " + String.valueOf(data.getGold(i)));
 				gold.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+				// gold.setLayoutParams(margin);
 				row.addView(gold);
 				
 				exp = new TextView(mCtx);
-				exp.setText(String.valueOf(data.getExpDaily(i)));
+				exp.setText(" " + String.valueOf(data.getExpDaily(i)));
 				exp.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+				// exp.setLayoutParams(margin);
 				row.addView(exp);
 				
 				rewards.addView(row);
