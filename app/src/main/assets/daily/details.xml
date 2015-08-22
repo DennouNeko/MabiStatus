@@ -1,5 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
 <details>
+	<!-- Taillteann -->
+	<mission id="도렌의 부탁">
+		<name>Dorren's Request</name>
+		<players>1~3</players>
+		<time-limit>0:40</time-limit>
+		<rewards>
+			<reward level="0" exp="30000" gold="3100" />
+			<reward level="1" exp="54000" gold="4340" />
+			<reward level="2" exp="90000" gold="6200" />
+			<reward level="3" exp="150000" gold="9300" />
+			<reward level="4" exp="210000" gold="12400" />
+		</rewards>
+	</mission>
+	<mission id="도발">
+		<name>Provocation</name>
+		<players>3</players>
+		<time-limit>0:30</time-limit>
+		<rewards>
+			<reward level="0" exp="20000" gold="800" />
+			<reward level="1" exp="36000" gold="1120" />
+			<reward level="2" exp="60000" gold="1600" />
+			<reward level="3" exp="100000" gold="2400" />
+			<reward level="4" exp="140000" gold="3200" />
+		</rewards>
+	</mission>
+	<mission id="새도우 위자드 퇴치">
+		<name>Defeat the Shadow Wizzard</name>
+		<players>1~8</players>
+		<time-limit>none</time-limit>
+		<rewards>
+			<reward level="0" exp="27000" gold="8800" />
+			<reward level="1" exp="48600" gold="12320" />
+			<reward level="2" exp="81000" gold="17600" />
+			<reward level="3" exp="135000" gold="26400" />
+			<reward level="4" exp="189000" gold="35200" />
+		</rewards>
+	</mission>
+	<mission id="정찰병 구출">
+		<name>Rescue the Scout</name>
+		<players>2~4</players>
+		<time>0:18</time>
+		<rewards>
+			<reward level="0" exp="14500" gold="3200" />
+			<reward level="1" exp="26100" gold="4480" />
+			<reward level="2" exp="43500" gold="6400" />
+			<reward level="3" exp="72500" gold="9600" />
+			<reward level="4" exp="101500" gold="12800" />
+		</rewards>
+	</mission>
+	<mission id="제물">
+		<name>Offering</name>
+		<players>1~4</players>
+		<time-limit>0:40</time-limit>
+		<rewards>
+			<reward level="0" exp="22000" gold="1000" />
+			<reward level="1" exp="39600" gold="1400" />
+			<reward level="2" exp="66000" gold="2000" />
+			<reward level="3" exp="110000" gold="3000" />
+			<reward level="4" exp="154000" gold="4000" />
+		</rewards>
+	</mission>
+	<mission id="탈틴 방어전">
+		<name>Taillteann Defensive Battle</name>
+		<players>3~6</players>
+		<time>0:18</time>
+		<rewards>
+			<reward level="0" exp="40000" gold="10500" />
+			<reward level="1" exp="72000" gold="14700" />
+			<reward level="2" exp="120000" gold="21000" />
+			<reward level="3" exp="200000" gold="31500" />
+			<reward level="4" exp="280000" gold="42000" />
+		</rewards>
+	</mission>
+	<mission id="탈틴 점령전 I">
+		<name>Battle for Taillteann I</name>
+		<players>1~4</players>
+		<time-limit>0:40</time-limit>
+		<rewards>
+			<reward level="0" exp="18500" gold="6500" />
+			<reward level="1" exp="33300" gold="9100" />
+			<reward level="2" exp="55500" gold="13000" />
+			<reward level="3" exp="92500" gold="19500" />
+			<reward level="4" exp="129500" gold="26000" />
+		</rewards>
+	</mission>
+	<mission id="탈틴 점령전 II">
+		<name>Battle for Taillteann II</name>
+		<players>1~3</players>
+		<time-limit>0:25</time-limit>
+		<rewards>
+			<reward level="0" exp="20000" gold="5700" />
+			<reward level="1" exp="36000" gold="7980" />
+			<reward level="2" exp="60000" gold="11400" />
+			<reward level="3" exp="100000" gold="17100" />
+			<reward level="4" exp="140000" gold="22800" />
+		</rewards>
+	</mission>
+	<mission id="포워르 커맨더 퇴치 I">
+		<name>Defeat Fomor Commander I</name>
+		<players>1~2</players>
+		<time-limit>none</time-limit>
+		<rewards>
+			<reward level="0" exp="24000" gold="3500" />
+			<reward level="1" exp="43200" gold="4900" />
+			<reward level="2" exp="72000" gold="7000" />
+			<reward level="3" exp="120000" gold="10500" />
+			<reward level="4" exp="168000" gold="14000" />
+		</rewards>
+	</mission>
+	<mission id="포워르 커맨더 퇴치 II">
+		<name>Defeat Fomor Commander II</name>
+		<players>1~3</players>
+		<time-limit>none</time-limit>
+		<rewards>
+			<reward level="0" exp="24000" gold="8600" />
+			<reward level="1" exp="43200" gold="12040" />
+			<reward level="2" exp="72000" gold="17200" />
+			<reward level="3" exp="120000" gold="25800" />
+			<reward level="4" exp="168000" gold="34400" />
+		</rewards>
+	</mission>
+	<!-- Tara -->
+	<mission id="그들의 방식">
+		<name>Their Method</name>
+		<players>1</players>
+		<time-limit>0:25</time-limit>
+		<rewards>
+			<reward level="0" exp="12000" gold="1500" />
+			<reward level="1" exp="21600" gold="2100" />
+			<reward level="2" exp="36000" gold="3000" />
+			<reward level="3" exp="60000" gold="4500" />
+			<reward level="4" exp="84000" gold="6000" />
+		</rewards>
+	</mission>
+	<mission id="그림자 세계의 유황거미">
+		<name>The Sulfur Spider inside Shadow Realm</name>
+		<players>1~8</players>
+		<time-limit>1:00</time-limit>
+		<rewards>
+			<reward level="0" exp="28000" gold="8500" />
+			<reward level="1" exp="50400" gold="11900" />
+			<reward level="2" exp="84000" gold="17000" />
+			<reward level="3" exp="140000" gold="25500" />
+			<reward level="4" exp="196000" gold="34000" />
+		</rewards>
+	</mission>
+	<mission id="그림자가 드리운 도시">
+		<name>Shadow Cast City</name>
+		<players>1~3</players>
+		<time-limit>0:25</time-limit>
+		<rewards>
+			<reward level="0" exp="10000" gold="1000" />
+			<reward level="1" exp="18000" gold="1400" />
+			<reward level="2" exp="30000" gold="2000" />
+			<reward level="3" exp="50000" gold="3000" />
+			<reward level="4" exp="70000" gold="4000" />
+		</rewards>
+	</mission>
+	<mission id="남아있는 어둠">
+		<name>Lingering Darkness</name>
+		<players>1~3</players>
+		<time-limit>0:25</time-limit>
+		<rewards>
+			<reward level="0" exp="16500" gold="3500" />
+			<reward level="1" exp="29700" gold="4900" />
+			<reward level="2" exp="49500" gold="7000" />
+			<reward level="3" exp="82500" gold="10500" />
+			<reward level="4" exp="115500" gold="14000" />
+		</rewards>
+	</mission>
+	<mission id="등 뒤의 적">
+		<name>Enemy Behind</name>
+		<players>1~2</players>
+		<time-limit>0:25</time-limit>
+		<rewards>
+			<reward level="0" exp="13000" gold="2300" />
+			<reward level="1" exp="23400" gold="3220" />
+			<reward level="2" exp="39000" gold="4600" />
+			<reward level="3" exp="65000" gold="6900" />
+			<reward level="4" exp="91000" gold="9200" />
+		</rewards>
+	</mission>
+	<mission id="또 다른 연금술사들">
+		<name>The Other Alchemists</name>
+		<players>1~4</players>
+		<time-limit>1:00</time-limit>
+		<rewards>
+			<reward level="0" exp="28000" gold="5500" />
+			<reward level="1" exp="50400" gold="7700" />
+			<reward level="2" exp="84000" gold="11000" />
+			<reward level="3" exp="140000" gold="16500" />
+			<reward level="4" exp="196000" gold="22000" />
+		</rewards>
+	</mission>
+	<mission id="파르홀론의 유령">
+		<name>Ghost of Partholon</name>
+		<players>1~5</players>
+		<time-limit>1:00</time-limit>
+		<rewards>
+			<reward level="0" exp="30000" gold="5000" />
+			<reward level="1" exp="54000" gold="7000" />
+			<reward level="2" exp="90000" gold="10000" />
+			<reward level="3" exp="150000" gold="15000" />
+			<reward level="4" exp="210000" gold="20000" />
+		</rewards>
+	</mission>
+	<mission id="포워르의 습격">
+		<name>Fomor Attack</name>
+		<players>1~5</players>
+		<time-limit>1:00</time-limit>
+		<rewards>
+			<reward level="0" exp="27000" gold="4000" />
+			<reward level="1" exp="48600" gold="5600" />
+			<reward level="2" exp="81000" gold="8000" />
+			<reward level="3" exp="135000" gold="12000" />
+			<reward level="4" exp="189000" gold="16000" />
+		</rewards>
+	</mission>
+	<!-- Test elements -->
 	<mission id="test 1">
 		<name>Test 1</name>
 		<players>1~8</players>
