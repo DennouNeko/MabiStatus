@@ -11,6 +11,12 @@ import android.media.*;
 import android.view.View.*;
 import java.util.*;
 import org.json.*;
+import javax.xml.parsers.*;
+import org.xml.sax.*;
+import java.io.*;
+import android.content.res.*;
+import android.text.style.*;
+import android.widget.AbsoluteLayout.*;
 
 public class MainActivity extends Activity 
 {
@@ -149,9 +155,35 @@ public class MainActivity extends Activity
 	
 	public void updateContent()
 	{
-		TextView t = (TextView)findViewById(R.id.message);
+		// TextView t = (TextView)findViewById(R.id.message);
 		// t.setText(isConnected(this) ? (isMobile(this) ? "Mobile" : "Wideband") : "Disconnected");
 		(new MainUpdater(this)).execute();
+	}
+	
+	private MissionInfo getMissionInfo(String name)
+	{
+		MissionInfoHandler mih = MissionInfoHandler.getInstance();
+		
+		if(!mih.isLoaded())
+		{
+			AssetManager assets = getBaseContext().getAssets();
+			try
+			{
+				InputStream is = assets.open("daily/details.xml");
+				SAXParserFactory spf = SAXParserFactory.newInstance();
+				SAXParser sp = spf.newSAXParser();
+				XMLReader xr = sp.getXMLReader();
+				xr.setContentHandler(mih);
+				
+				InputSource inStream = new InputSource(is);
+				xr.parse(inStream);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return mih.getMission(name);
 	}
 	
 	private class MainUpdater extends AsyncTask<Void, Void, JSONObject >
@@ -184,9 +216,108 @@ public class MainActivity extends Activity
 			}
 			else
 			{
-				Log.d(tag, "No connected!");
+				Log.d(tag, "Not connected!");
 			}
 			return data;
+		}
+		
+		private RelativeLayout.LayoutParams makeBelow(int id)
+		{
+			RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			param.addRule(RelativeLayout.BELOW, id);
+			return param;
+		}
+		
+		private void updateDetails(RelativeLayout view, MissionInfo data)
+		{
+			view.removeAllViewsInLayout();
+			TextView players = new TextView(mCtx);
+			players.setId(view.generateViewId());
+			players.setText("Party size: " + data.getPlayers());
+			view.addView(players);
+			
+			TextView time = new TextView(mCtx);
+			time.setLayoutParams(makeBelow(players.getId()));
+			time.setId(view.generateViewId());
+			time.setText((data.isTimeLimit() ? "Time limit: " : "Time: ") + data.getTime());
+			view.addView(time);
+			
+			TableLayout rewards = new TableLayout(mCtx);
+			RelativeLayout.LayoutParams rewardsParams = makeBelow(time.getId());
+			rewardsParams.width = LayoutParams.FILL_PARENT;
+			rewards.setLayoutParams(rewardsParams);
+			rewards.setId(view.generateViewId());
+			TableRow hdr = new TableRow(mCtx);
+			TableRow.LayoutParams rowParams = new TableRow.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+			hdr.setLayoutParams(rowParams);
+			TextView rank = new TextView(mCtx);
+			hdr.addView(rank);
+			TextView gold = new TextView(mCtx);
+			gold.setText("Gold");
+			hdr.addView(gold);
+			TextView exp = new TextView(mCtx);
+			exp.setText("EXP");
+			hdr.addView(exp);
+			rewards.addView(hdr);
+			for(int i = 0; i < 5; i++)
+			{
+				TableRow row = new TableRow(mCtx);
+				row.setLayoutParams(rowParams);
+				String diff = "?";
+				switch(i)
+				{
+					case 0: diff = "Basic"; break;
+					case 1: diff = "Intermediate"; break;
+					case 2: diff = "Advanced"; break;
+					case 3: diff = "Hard"; break;
+					case 4: diff = "Elite"; break;
+				}
+				rank = new TextView(mCtx);
+				rank.setText(diff);
+				row.addView(rank);
+				
+				gold = new TextView(mCtx);
+				gold.setText(String.valueOf(data.getGold(i)));
+				gold.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+				row.addView(gold);
+				
+				exp = new TextView(mCtx);
+				exp.setText(String.valueOf(data.getExpDaily(i)));
+				exp.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+				row.addView(exp);
+				
+				rewards.addView(row);
+			}
+			view.addView(rewards);
+			
+			String info = data.getInfo();
+			if(info != null && !info.equals(""))
+			{
+				TextView infoView = new TextView(mCtx);
+				infoView.setLayoutParams(makeBelow(rewards.getId()));
+				infoView.setId(view.generateViewId());
+				infoView.setText(data.getInfo());
+				view.addView(infoView);
+			}
+		}
+		
+		private void updateDaily(String name, int header, int details)
+		{
+			MissionInfo info = getMissionInfo(name);
+			TextView tvHeader = (TextView)findViewById(header);
+			RelativeLayout tvDetails = (RelativeLayout)findViewById(details);
+
+			if(info != null)
+			{
+				tvHeader.setText(info.getName());
+				updateDetails(tvDetails, info);
+			}
+			else
+			{
+				tvHeader.setText(name);
+				tvDetails.removeAllViewsInLayout();
+			}
 		}
 		
 		@Override
@@ -205,18 +336,18 @@ public class MainActivity extends Activity
 						if(!result.isNull("today"))
 						{
 							JSONObject daily = (JSONObject)result.get("today");
-							JSONObject tara = (JSONObject)daily.get("Tara");
-							JSONObject tail = (JSONObject)daily.get("Taillteann");
-							((TextView)findViewById(R.id.daily_today_tara)).setText(tara.getString("Normal"));
-							((TextView)findViewById(R.id.daily_today_tail)).setText(tail.getString("Normal"));
+							String tara = ((JSONObject)daily.get("Tara")).getString("Normal");
+							String tail = ((JSONObject)daily.get("Taillteann")).getString("Normal");
+							updateDaily(tara, R.id.daily_today_tara, R.id.daily_today_tara_content);
+							updateDaily(tail, R.id.daily_today_tail, R.id.daily_today_tail_content);
 						}
 						if(!result.isNull("tomorrow"))
 						{
 							JSONObject daily = (JSONObject)result.get("tomorrow");
-							JSONObject tara = (JSONObject)daily.get("Tara");
-							JSONObject tail = (JSONObject)daily.get("Taillteann");
-							((TextView)findViewById(R.id.daily_tomorrow_tara)).setText(tara.getString("Normal"));
-							((TextView)findViewById(R.id.daily_tomorrow_tail)).setText(tail.getString("Normal"));
+							String tara = ((JSONObject)daily.get("Tara")).getString("Normal");
+							String tail = ((JSONObject)daily.get("Taillteann")).getString("Normal");
+							updateDaily(tara, R.id.daily_tomorrow_tara, R.id.daily_tomorrow_tara_content);
+							updateDaily(tail, R.id.daily_tomorrow_tail, R.id.daily_tomorrow_tail_content);
 						}
 					}
 					else

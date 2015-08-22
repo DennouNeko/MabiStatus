@@ -36,12 +36,11 @@
 			android:background="@drawable/menu"
 			android:id="@+id/daily_today_tara"
 			android:text="Tara Today"/>
-		<TextView
+		<RelativeLayout
 			android:layout_below="@+id/daily_today_tara"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/daily_today_tara_content"
-			android:text="@string/message_loading"
 			android:visibility="gone"/>
 		<TextView
 			android:layout_below="@+id/daily_today_tara_content"
@@ -50,12 +49,11 @@
 			android:background="@drawable/menu"
 			android:id="@+id/daily_today_tail"
 			android:text="Tail Today"/>
-		<TextView
+		<RelativeLayout
 			android:layout_below="@+id/daily_today_tail"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/daily_today_tail_content"
-			android:text="@string/message_loading"
 			android:visibility="gone"/>
 		<LinearLayout
 			android:layout_below="@+id/daily_today_tail_content"
@@ -75,12 +73,11 @@
 			android:background="@drawable/menu"
 			android:id="@+id/daily_tomorrow_tara"
 			android:text="Tara Tomorrow"/>
-		<TextView
+		<RelativeLayout
 			android:layout_below="@+id/daily_tomorrow_tara"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/daily_tomorrow_tara_content"
-			android:text="@+string/message_loading"
 			android:visibility="gone"/>
 		<TextView
 			android:layout_below="@+id/daily_tomorrow_tara_content"
@@ -89,12 +86,11 @@
 			android:background="@drawable/menu"
 			android:id="@+id/daily_tomorrow_tail" 
 			android:text="Tail Tomorrow"/>
-		<TextView
+		<RelativeLayout
 			android:layout_below="@+id/daily_tomorrow_tail"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/daily_tomorrow_tail_content"
-			android:text="@string/message_loading"
 			android:visibility="gone"/>
 	</RelativeLayout>
 </LinearLayout>

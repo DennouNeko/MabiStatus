@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<details>
+	<mission id="test 1">
+		<name>Test 1</name>
+		<players>1~8</players>
+		<time-limit>none</time-limit>
+		<rewards>
+			<reward level="0" exp="5" gold="0" />
+			<reward level="1" exp="6" gold="1" />
+			<reward level="2" exp="7" gold="2" />
+			<reward level="3" exp="8" gold="3" />
+			<reward level="4" exp="9" gold="4" />
+		</rewards>
+		<info>Just small test info</info>
+	</mission>
+	<mission id="test 2">
+		<name>Test 2</name>
+		<players>1</players>
+		<time>18:00</time>
+		<rewards>
+			<reward level="0" exp="9" gold="0" />
+			<reward level="1" exp="8" gold="1" />
+			<reward level="2" exp="7" gold="2" />
+			<reward level="3" exp="6" gold="3" />
+			<reward level="4" exp="5" gold="4" />
+		</rewards>
+	</mission>
+</details>
