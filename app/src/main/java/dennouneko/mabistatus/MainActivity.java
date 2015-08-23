@@ -17,11 +17,13 @@ import java.io.*;
 import android.content.res.*;
 import android.text.style.*;
 import android.widget.AbsoluteLayout.*;
+import java.text.*;
 
 public class MainActivity extends Activity 
 {
 	private static final String tag = "MainActivity";
 	public static final int mIdStatus = 1;
+	public static final String serverTimezone = "America/Los_Angeles";
 	
 	private void doTest()
 	{
@@ -157,7 +159,14 @@ public class MainActivity extends Activity
 	{
 		// TextView t = (TextView)findViewById(R.id.message);
 		// t.setText(isConnected(this) ? (isMobile(this) ? "Mobile" : "Wideband") : "Disconnected");
-		(new MainUpdater(this)).execute();
+		Calendar now = Calendar.getInstance();
+		now.add(Calendar.HOUR, -7);
+		SimpleDateFormat sdfServer = new SimpleDateFormat("yyyy-MM-dd");
+		sdfServer.setTimeZone(TimeZone.getTimeZone(serverTimezone));
+		String date = sdfServer.format(now.getTime());
+		Log.v(tag, "Getting dailies for " + date);
+		
+		(new MainUpdater(this)).execute(date);
 	}
 	
 	private MissionInfo getMissionInfo(String name)
@@ -186,9 +195,10 @@ public class MainActivity extends Activity
 		return mih.getMission(name);
 	}
 	
-	private class MainUpdater extends AsyncTask<Void, Void, JSONObject >
+	private class MainUpdater extends AsyncTask<String, Void, JSONArray >
 	{
 		private Context mCtx;
+		private String mReqDate;
 		private static final String tag = "MainActivity$MainUpdater";
 
 		@Override
@@ -205,14 +215,15 @@ public class MainActivity extends Activity
 		}
 		
 		@Override
-		protected JSONObject doInBackground(Void[] p1)
+		protected JSONArray doInBackground(String[] p1)
 		{
-			JSONObject data = null;
+			JSONArray data = null;
 			
 			if(isConnected(mCtx))
 			{
 				MyHTTP http = MyHTTP.getInstance();
-				data = http.getDailyInfo(mCtx);
+				mReqDate = p1[0];
+				data = http.getDailyInfo(mCtx, p1[0]);
 			}
 			else
 			{
@@ -324,38 +335,30 @@ public class MainActivity extends Activity
 		}
 		
 		@Override
-		protected void onPostExecute(JSONObject result)
+		protected void onPostExecute(JSONArray result)
 		{
 			TextView t = (TextView)findViewById(R.id.message);
 			try
 			{
 				if(result != null)
 				{
-					// t.setText(result.getString("result"));
-					if(result.isNull("error"))
+					// t.setVisibility(View.GONE);
+					t.setText(mReqDate);
+					if(!result.isNull(0))
 					{
-						// t.setVisibility(View.GONE);
-						t.setText(result.getString("date"));
-						if(!result.isNull("today"))
-						{
-							JSONObject daily = (JSONObject)result.get("today");
-							String tara = ((JSONObject)daily.get("Tara")).getString("Normal");
-							String tail = ((JSONObject)daily.get("Taillteann")).getString("Normal");
-							updateDaily(tara, R.id.daily_today_tara, R.id.daily_today_tara_content);
-							updateDaily(tail, R.id.daily_today_tail, R.id.daily_today_tail_content);
-						}
-						if(!result.isNull("tomorrow"))
-						{
-							JSONObject daily = (JSONObject)result.get("tomorrow");
-							String tara = ((JSONObject)daily.get("Tara")).getString("Normal");
-							String tail = ((JSONObject)daily.get("Taillteann")).getString("Normal");
-							updateDaily(tara, R.id.daily_tomorrow_tara, R.id.daily_tomorrow_tara_content);
-							updateDaily(tail, R.id.daily_tomorrow_tail, R.id.daily_tomorrow_tail_content);
-						}
+						JSONObject daily = result.getJSONObject(0);
+						String tara = daily.getJSONObject("Tara").getJSONObject("normal").getString("name");
+						String tail = daily.getJSONObject("Taillteann").getJSONObject("normal").getString("name");
+						updateDaily(tara, R.id.daily_today_tara, R.id.daily_today_tara_content);
+						updateDaily(tail, R.id.daily_today_tail, R.id.daily_today_tail_content);
 					}
-					else
+					if(!result.isNull(1))
 					{
-						t.setText(result.getString("error"));
+						JSONObject daily = result.getJSONObject(1);
+						String tara = daily.getJSONObject("Tara").getJSONObject("normal").getString("name");
+						String tail = daily.getJSONObject("Taillteann").getJSONObject("normal").getString("name");
+						updateDaily(tara, R.id.daily_tomorrow_tara, R.id.daily_tomorrow_tara_content);
+						updateDaily(tail, R.id.daily_tomorrow_tail, R.id.daily_tomorrow_tail_content);
 					}
 				}
 				else
@@ -365,7 +368,7 @@ public class MainActivity extends Activity
 			}
 			catch(JSONException e)
 			{
-				t.setText(e.getMessage());
+				Log.d(tag, e.getMessage());
 			}
 		}
 	}

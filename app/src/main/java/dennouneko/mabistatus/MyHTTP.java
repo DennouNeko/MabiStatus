@@ -21,7 +21,8 @@ public class MyHTTP
 	private static MyHTTP mInstance;
 	private static final String tag = "MyHTTP";
 	private static final String urlPatch = "http://php-dennouneko.rhcloud.com/proxy.php?type=patch";
-	private static final String urlDaily = "http://php-dennouneko.rhcloud.com/proxy.php?type=daily";
+	// private static final String urlDaily = "http://php-dennouneko.rhcloud.com/proxy.php?type=daily";
+	private static final String urlDaily = "https://mabi-api.sigkill.kr/get_todayshadowmission/%s?ndays=2";
 	
 	private MyHTTP()
 	{
@@ -49,12 +50,13 @@ public class MyHTTP
 			conn.setConnectTimeout(15000);
 			conn.setRequestMethod("GET");
 			conn.setDoInput(true);
+			conn.setInstanceFollowRedirects(true);
 			// start of query
 			Log.d(tag, "Sending query");
 			conn.connect();
 			int code = conn.getResponseCode();
-			
 			Log.d(tag, "Response code: " + code);
+			
 			is = conn.getInputStream();
 			
 			String ret = readIt(is, -1);
@@ -149,36 +151,42 @@ public class MyHTTP
 		return 2; // For now pretend it's online
 	}
 	
-	public JSONObject getDailyInfo(Context ctx)
+	private JSONArray prepareDaily(String data)
 	{
-		String result = "";
-		JSONObject ret = null;
-		
+		JSONArray ret = null;
 		try
 		{
-			try
-			{
-				result = getData(urlDaily);
-			}
-			catch(ClientProtocolException e)
-			{
-				ret = new JSONObject();
-				ret.accumulate("error", e.getMessage());
-				return ret;
-			}
-			catch(IOException e)
-			{
-				ret = new JSONObject();
-				ret.accumulate("error", e.getMessage());
-				return ret;
-			}
-			
-			ret = new JSONObject(result);
-			ret.accumulate("result", result);
+			ret = new JSONArray(data);
 		}
 		catch(JSONException e)
 		{
 			e.printStackTrace();
+		}
+		return ret;
+	}
+	
+	public JSONArray getDailyInfo(Context ctx, String date)
+	{
+		String result = "";
+		JSONArray ret = null;
+		
+		String src = String.format(urlDaily, date);
+		
+		try
+		{
+			Log.d(tag, "Dailies from " + src);
+			result = getData(src);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+			
+		ret = prepareDaily(result);
+		
+		if(ret == null)
+		{
+			Log.v(tag, result);
 		}
 		
 		return ret;
