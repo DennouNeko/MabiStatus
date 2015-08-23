@@ -20,8 +20,7 @@ public class MyHTTP
 {
 	private static MyHTTP mInstance;
 	private static final String tag = "MyHTTP";
-	private static final String urlPatch = "http://php-dennouneko.rhcloud.com/proxy.php?type=patch";
-	// private static final String urlDaily = "http://php-dennouneko.rhcloud.com/proxy.php?type=daily";
+	private static final String urlPatch = "http://mabipatchinfo.nexon.net/patch/patch.txt";
 	private static final String urlDaily = "https://mabi-api.sigkill.kr/get_todayshadowmission/%s?ndays=2";
 	
 	private MyHTTP()
