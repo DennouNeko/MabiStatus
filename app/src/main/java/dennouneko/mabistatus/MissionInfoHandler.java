@@ -54,7 +54,7 @@ public class MissionInfoHandler extends DefaultHandler
 		
 		else if(qName.equals("mission"))
 		{
-			Log.v(tag, "Adding mission " + curName + " (" + curMission.getName() + ")");
+			// Log.v(tag, "Adding mission " + curName + " (" + curMission.getName() + ")");
 			data.put(curName, curMission);
 			curName = "";
 			curMission = null;
@@ -91,7 +91,7 @@ public class MissionInfoHandler extends DefaultHandler
 			curMission.setExp(level, exp);
 			curMission.setGold(level, gold);
 			
-			Log.v(tag, String.format("Diff: %d, %d, %d", level, exp, gold));
+			// Log.v(tag, String.format("Diff: %d, %d, %d", level, exp, gold));
 		}
 	}
 	
