@@ -26,6 +26,8 @@ public class MainActivity extends Activity
 	public static final String serverTimezone = "America/Los_Angeles";
 	private String mReqDate;
 	
+	private DiskCache cacheDaily = new DiskCache(this);
+	
 	private void doTest()
 	{
 		notifyStatus(getApplicationContext(), "Server went Online");
@@ -56,7 +58,7 @@ public class MainActivity extends Activity
     {
         super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-        updateContent();
+        updateContent(false);
 		int[] items = {R.id.daily_today_tara, R.id.daily_today_tara_content,
 					R.id.daily_today_tail, R.id.daily_today_tail_content,
 					R.id.daily_tomorrow_tara, R.id.daily_tomorrow_tara_content,
@@ -117,7 +119,7 @@ public class MainActivity extends Activity
 		switch(item.getItemId())
 		{
 			case R.id.menu_refresh:
-				updateContent();
+				updateContent(true);
 				return true;
 			case R.id.menu_refresh_widget:
 				StatusWidgetProvider.updateAllWidgets(this);
@@ -295,7 +297,7 @@ public class MainActivity extends Activity
 		}
 	}
 	
-	public void updateContent()
+	public void updateContent(boolean force)
 	{
 		// TextView t = (TextView)findViewById(R.id.message);
 		// t.setText(isConnected(this) ? (isMobile(this) ? "Mobile" : "Wideband") : "Disconnected");
@@ -304,9 +306,26 @@ public class MainActivity extends Activity
 		SimpleDateFormat sdfServer = new SimpleDateFormat("yyyy-MM-dd");
 		sdfServer.setTimeZone(TimeZone.getTimeZone(serverTimezone));
 		mReqDate = sdfServer.format(now.getTime());
-		Log.v(tag, "Getting dailies for " + mReqDate);
 		
-		(new MainUpdater(this)).execute(mReqDate);
+		cacheDaily.load("cache_daily.json");
+		if(force || !mReqDate.equals(cacheDaily.getSignature()))
+		{
+			Log.v(tag, "Getting dailies for " + mReqDate);
+			(new MainUpdater(this)).execute(mReqDate);
+		}
+		else
+		{
+			Log.v(tag, "Using cached dailies for " + mReqDate);
+			try
+			{
+				JSONArray tmp = new JSONArray(cacheDaily.get());
+				updateDailyInfo(tmp);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private MissionInfo getMissionInfo(String name)
@@ -373,6 +392,12 @@ public class MainActivity extends Activity
 		@Override
 		protected void onPostExecute(JSONArray result)
 		{
+			if(result != null)
+			{
+				cacheDaily.putSignature(mReqDate);
+				cacheDaily.put(result.toString());
+				cacheDaily.flush();
+			}
 			updateDailyInfo(result);
 		}
 	}
