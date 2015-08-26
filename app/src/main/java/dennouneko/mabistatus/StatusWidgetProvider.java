@@ -19,7 +19,7 @@ import android.nfc.*;
 
 public class StatusWidgetProvider extends AppWidgetProvider
 {
-	private static final String tag = "StstusWidgetProvider";
+	private static final String tag = "StatusWidgetProvider";
 	private static int mOldStatus = -1;
 	
 	@Override
