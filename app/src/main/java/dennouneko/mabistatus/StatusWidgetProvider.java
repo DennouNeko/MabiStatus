@@ -73,7 +73,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			int login = (result >> 4) & 0x0f;
 			int status = 0;
 			
-			if((login > 0 && patch == 1) || (patch > 0 && login == 1))
+			if((login > 0 && login < 0x0f && patch == 1) || (patch > 0 && patch < 0x0f && login == 1))
 			{
 				res = R.string.status_maint;
 				status = 1;
