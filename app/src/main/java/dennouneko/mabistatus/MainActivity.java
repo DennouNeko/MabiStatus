@@ -28,13 +28,6 @@ public class MainActivity extends Activity
 	
 	private DiskCache cacheDaily = new DiskCache(this);
 	
-	static public int testStatus = 2;
-	
-	private void doTest()
-	{
-		testStatus = 3 - testStatus;
-	}
-	
 	public static void notifyStatus(Context ctx, String message)
 	{
 		Notification.Builder noti = new Notification.Builder(ctx)
@@ -132,9 +125,8 @@ public class MainActivity extends Activity
 			case R.id.menu_refresh_widget:
 				StatusWidgetProvider.updateAllWidgets(this);
 				return true;
-			case R.id.menu_debug:
-				doTest();
-				return true;
+			// case R.id.menu_debug:
+			//	return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
