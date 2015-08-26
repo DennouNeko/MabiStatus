@@ -28,9 +28,11 @@ public class MainActivity extends Activity
 	
 	private DiskCache cacheDaily = new DiskCache(this);
 	
+	static public int testStatus = 2;
+	
 	private void doTest()
 	{
-		notifyStatus(getApplicationContext(), "Server went Online");
+		testStatus = 3 - testStatus;
 	}
 	
 	public static void notifyStatus(Context ctx, String message)

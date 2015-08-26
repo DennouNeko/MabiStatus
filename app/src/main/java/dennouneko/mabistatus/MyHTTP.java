@@ -147,7 +147,7 @@ public class MyHTTP
 	
 	public int getLoginStatus(Context ctx)
 	{
-		return 2; // For now pretend it's online
+		return MainActivity.testStatus; // for testing purposes
 	}
 	
 	private JSONArray prepareDaily(String data)
