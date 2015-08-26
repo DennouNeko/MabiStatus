@@ -20,6 +20,7 @@ import android.nfc.*;
 public class StatusWidgetProvider extends AppWidgetProvider
 {
 	private static final String tag = "StstusWidgetProvider";
+	
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
 	{
@@ -37,6 +38,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 	{
 		private Context mCtx;
 		private static final String tag = "StatusWidgetProvider$WidgetUpdater";
+		private int oldStatus = -1;
 		
 		public WidgetUpdater(Context ctx)
 		{
@@ -69,16 +71,36 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			int res = R.string.status_offline;
 			int patch = (result >> 0) & 0x0f;
 			int login = (result >> 4) & 0x0f;
+			int status = 0;
 			
 			if((login > 0 && patch == 1) || (patch > 0 && login == 1))
 			{
 				res = R.string.status_maint;
+				status = 1;
 			}
 			else if(patch == 2 && login == 2)
 			{
 				res = R.string.status_online;
+				status = 2;
 			}
 			String resultText = mCtx.getResources().getText(res).toString();
+			
+			if(oldStatus != status)
+			{
+				if(oldStatus == 2 && status == 1)
+				{
+					MainActivity.notifyStatus(mCtx, R.string.message_maintenance);
+				}
+				else if(oldStatus == 1 && status == 2)
+				{
+					MainActivity.notifyStatus(mCtx, R.string.message_online);
+				}
+				
+				if(status > 0)
+				{
+					oldStatus = status;
+				}
+			}
 			
 			RemoteViews updateViews = new RemoteViews(mCtx.getPackageName(), R.layout.status_appwidget);
 			updateViews.setTextViewText(R.id.status_login, resultText);

@@ -15,4 +15,6 @@
 	<string name="status_maint">Maint</string>
 	<string name="status_online">Online</string>
 	<string name="message_loading">Loading...</string>
+	<string name="message_maintenance">Maintenance has started</string>
+	<string name="message_online">Server is online now</string>
 </resources>

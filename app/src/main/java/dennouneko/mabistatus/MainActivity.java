@@ -53,6 +53,12 @@ public class MainActivity extends Activity
 		manager.notify(mIdStatus, noti.build());
 	}
 	
+	public static void notifyStatus(Context ctx, int resid)
+	{
+		String msg = ctx.getString(resid);
+		notifyStatus(ctx, msg);
+	}
+	
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
