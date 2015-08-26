@@ -28,6 +28,11 @@ public class MainActivity extends Activity
 	
 	private DiskCache cacheDaily = new DiskCache(this);
 	
+	private void doTest()
+	{
+		notifyStatus(this, "Server went online");
+	}
+	
 	public static void notifyStatus(Context ctx, String message)
 	{
 		Notification.Builder noti = new Notification.Builder(ctx)
@@ -125,8 +130,9 @@ public class MainActivity extends Activity
 			case R.id.menu_refresh_widget:
 				StatusWidgetProvider.updateAllWidgets(this);
 				return true;
-			// case R.id.menu_debug:
-			//	return true;
+			case R.id.menu_debug:
+				doTest();
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

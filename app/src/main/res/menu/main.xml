@@ -5,6 +5,6 @@
 		android:title="@string/refresh_widget"/>
 	<item android:id="@+id/menu_settings"
 		android:title="@string/settings"/>
-	<!--<item android:id="@+id/menu_debug"
-		android:title="@string/menu_debug" />-->
+	<item android:id="@+id/menu_debug"
+		android:title="@string/menu_debug" />
 </menu>
