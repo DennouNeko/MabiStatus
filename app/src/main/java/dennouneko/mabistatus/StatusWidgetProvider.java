@@ -20,6 +20,7 @@ import android.nfc.*;
 public class StatusWidgetProvider extends AppWidgetProvider
 {
 	private static final String tag = "StstusWidgetProvider";
+	private static int mOldStatus = -1;
 	
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
@@ -34,11 +35,20 @@ public class StatusWidgetProvider extends AppWidgetProvider
 		new WidgetUpdater(ctx).execute();
 	}
 	
+	public static int getCurStatus()
+	{
+		return mOldStatus;
+	}
+	
+	private static void setCurStatus(int s)
+	{
+		mOldStatus = s;
+	}
+	
 	private static class WidgetUpdater extends AsyncTask<Void, Void, Integer>
 	{
 		private Context mCtx;
 		private static final String tag = "StatusWidgetProvider$WidgetUpdater";
-		private int oldStatus = -1;
 		
 		public WidgetUpdater(Context ctx)
 		{
@@ -85,6 +95,8 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			}
 			String resultText = mCtx.getResources().getText(res).toString();
 			
+			int oldStatus = getCurStatus();
+			
 			if(oldStatus != status)
 			{
 				if(oldStatus == 2 && status == 1)
@@ -98,7 +110,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 				
 				if(status > 0)
 				{
-					oldStatus = status;
+					setCurStatus(status);
 				}
 			}
 			
