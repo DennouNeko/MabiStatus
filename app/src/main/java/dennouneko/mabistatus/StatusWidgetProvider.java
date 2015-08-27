@@ -22,10 +22,32 @@ public class StatusWidgetProvider extends AppWidgetProvider
 	private static final String tag = "StatusWidgetProvider";
 	private static int mOldStatus = -1;
 	
+	static PowerManager mPowerManager = null;
+	static PowerManager.WakeLock mWakeLock = null;
+	
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
 	{
 		Log.v(tag, "onUpdate");
+		try
+		{
+			if(mPowerManager == null)
+			{
+				mPowerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+			}
+			if(mPowerManager != null && mWakeLock == null)
+			{
+				mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Widget update");
+			}
+			if(mWakeLock != null)
+			{
+				mWakeLock.acquire();
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		new WidgetUpdater(context).execute();
 	}
 	
@@ -125,6 +147,12 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			ComponentName thisWidget = new ComponentName(mCtx, StatusWidgetProvider.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(mCtx);
 			manager.updateAppWidget(thisWidget, updateViews);
+			
+			if(mWakeLock != null)
+			{
+				mWakeLock.release();
+				mWakeLock = null;
+			}
 		}
 	}
 }
