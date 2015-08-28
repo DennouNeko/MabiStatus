@@ -136,7 +136,6 @@ public class StatusWidgetProvider extends AppWidgetProvider
 				}
 				else
 				{
-					MainActivity.wakeUpNetwork(mCtx);
 					Log.d(tag, "Not connected!");
 				}//*/
 				if(patch != 0x0f || login != 0x0f)

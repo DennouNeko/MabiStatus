@@ -153,12 +153,6 @@ public class MainActivity extends Activity
 		return super.onCreateOptionsMenu(menu);
 	}
 	
-	public static void wakeUpNetwork(Context ctx)
-	{
-		ConnectivityManager connMgr = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
-		connMgr.startUsingNetworkFeature(ConnectivityManager.TYPE_MOBILE, "enableHIPRI");
-	}
-	
 	public static boolean isConnected(Context ctx)
 	{
 		ConnectivityManager connMgr = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
