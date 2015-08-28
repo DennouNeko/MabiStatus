@@ -24,6 +24,35 @@ public class StatusWidgetProvider extends AppWidgetProvider
 	
 	static PowerManager mPowerManager = null;
 	static PowerManager.WakeLock mWakeLock = null;
+	static private int mInterval = 5 * 60 * 1000;
+	
+	public static void setAlarm(Context context)
+	{
+		PendingIntent update = getUpdateIntent(context);
+		AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+		mgr.cancel(update);
+		long at = System.currentTimeMillis() + mInterval;
+		mgr.set(AlarmManager.RTC_WAKEUP, at, update);
+	}
+	
+	public static PendingIntent getUpdateIntent(Context context)
+	{
+		AppWidgetManager manager = AppWidgetManager.getInstance(context);
+		ComponentName providerName = new ComponentName(context, StatusWidgetProvider.class);
+		int[] ids = manager.getAppWidgetIds(providerName);
+		Intent intent = new Intent(context, StatusWidgetProvider.class);
+		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+		intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+		return PendingIntent.getBroadcast(context, 0, intent, 0);
+	}
+	
+	@Override
+	public void onEnabled(Context context)
+	{
+		Log.d(tag, "onEnabled");
+		setAlarm(context);
+		updateAllWidgets(context);
+	}
 	
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
@@ -49,6 +78,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			e.printStackTrace();
 		}
 		new WidgetUpdater(context).execute();
+		setAlarm(context);
 	}
 	
 	public static void updateAllWidgets(Context ctx)
