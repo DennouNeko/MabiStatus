@@ -24,7 +24,9 @@ public class StatusWidgetProvider extends AppWidgetProvider
 	
 	static PowerManager mPowerManager = null;
 	static PowerManager.WakeLock mWakeLock = null;
-	static private int mInterval = 5 * 60 * 1000;
+	static public final int INTERVAL5 = 5 * 60 * 1000;
+	static public final int INTERVAL30 = 30 * 60 * 1000;
+	static private int mInterval = INTERVAL5;
 	
 	public static void setAlarm(Context context)
 	{
@@ -113,16 +115,34 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			int patch = 0;
 			int login = 0;
 			
-			if(MainActivity.isConnected(mCtx))
+			for(int t = 0; t < 5; t++)
 			{
-				MyHTTP http = MyHTTP.getInstance();
-				patch = http.getPatchStatus(mCtx) & 0x0f;
-				login = http.getLoginStatus(mCtx) & 0x0f;
+				if(t > 0)
+				{
+					try
+					{
+						Thread.sleep(1000);
+					}
+					catch(Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
+				//if(MainActivity.isConnected(mCtx))
+				{
+					MyHTTP http = MyHTTP.getInstance();
+					patch = http.getPatchStatus(mCtx) & 0x0f;
+					login = http.getLoginStatus(mCtx) & 0x0f;
+				}
+				/*else
+				{
+					Log.d(tag, "Not connected!");
+				}//*/
+				if(patch != 0x0f || login != 0x0f)
+				{
+					break;
+				}
 			}
-			else
-			{
-				Log.d(tag, "Not connected!");
-			}//*/
 			return patch | (login << 4);
 		}
 
@@ -139,11 +159,13 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			{
 				res = R.string.status_maint;
 				status = 1;
+				mInterval = INTERVAL5;
 			}
 			else if(patch == 2 && login == 2)
 			{
 				res = R.string.status_online;
 				status = 2;
+				mInterval = INTERVAL30;
 			}
 			String resultText = mCtx.getResources().getText(res).toString();
 			
