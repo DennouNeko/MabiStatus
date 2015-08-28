@@ -32,7 +32,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 	{
 		PendingIntent update = getUpdateIntent(context);
 		AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-		mgr.cancel(update);
+		mgr.cancel(update); // just to make sure we aren't adding infinite alarms
 		long at = System.currentTimeMillis() + mInterval;
 		mgr.set(AlarmManager.RTC_WAKEUP, at, update);
 	}
@@ -128,14 +128,15 @@ public class StatusWidgetProvider extends AppWidgetProvider
 						e.printStackTrace();
 					}
 				}
-				//if(MainActivity.isConnected(mCtx))
+				if(MainActivity.isConnected(mCtx))
 				{
 					MyHTTP http = MyHTTP.getInstance();
 					patch = http.getPatchStatus(mCtx) & 0x0f;
 					login = http.getLoginStatus(mCtx) & 0x0f;
 				}
-				/*else
+				else
 				{
+					MainActivity.wakeUpNetwork(mCtx);
 					Log.d(tag, "Not connected!");
 				}//*/
 				if(patch != 0x0f || login != 0x0f)
