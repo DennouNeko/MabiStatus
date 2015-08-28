@@ -13,6 +13,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+		<activity android:name=".ConfigActivity" android:label="@string/app_config_name" >
+		</activity>
 		<receiver android:name=".StatusWidgetProvider" android:label="@string/widget_name" >
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

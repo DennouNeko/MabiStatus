@@ -33,6 +33,12 @@ public class MainActivity extends Activity
 		notifyStatus(this, "Server went online");
 	}
 	
+	private void doSettings()
+	{
+		Intent config = new Intent(this, ConfigActivity.class);
+		startActivity(config);
+	}
+	
 	public static void notifyStatus(Context ctx, String message)
 	{
 		Notification.Builder noti = new Notification.Builder(ctx)
@@ -130,6 +136,9 @@ public class MainActivity extends Activity
 			case R.id.menu_refresh_widget:
 				StatusWidgetProvider.updateAllWidgets(this);
 				return true;
+			case R.id.menu_settings:
+				doSettings();
+				break;
 			case R.id.menu_debug:
 				doTest();
 				return true;
