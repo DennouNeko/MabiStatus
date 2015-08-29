@@ -17,6 +17,7 @@ import android.net.*;
 import android.util.*;
 import android.nfc.*;
 import android.net.wifi.*;
+import android.preference.*;
 
 public class StatusWidgetProvider extends AppWidgetProvider
 {
@@ -185,13 +186,19 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			
 			if(oldStatus != status)
 			{
-				if(oldStatus == 2 && status == 1)
+				SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mCtx);
+				boolean notify = pref.getBoolean(ConfigActivity.KEY_PREF_NOTIFY, true);
+				
+				if(notify)
 				{
-					MainActivity.notifyStatus(mCtx, R.string.message_maintenance);
-				}
-				else if(oldStatus == 1 && status == 2)
-				{
-					MainActivity.notifyStatus(mCtx, R.string.message_online);
+					if(oldStatus == 2 && status == 1)
+					{
+						MainActivity.notifyStatus(mCtx, R.string.message_maintenance);
+					}
+					else if(oldStatus == 1 && status == 2)
+					{
+						MainActivity.notifyStatus(mCtx, R.string.message_online);
+					}
 				}
 				
 				if(status > 0)

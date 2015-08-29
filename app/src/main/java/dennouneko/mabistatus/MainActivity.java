@@ -18,6 +18,7 @@ import android.content.res.*;
 import android.text.style.*;
 import android.widget.AbsoluteLayout.*;
 import java.text.*;
+import android.preference.*;
 
 public class MainActivity extends Activity 
 {
@@ -30,7 +31,9 @@ public class MainActivity extends Activity
 	
 	private void doTest()
 	{
-		notifyStatus(this, "Server went online");
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean notify = pref.getBoolean(ConfigActivity.KEY_PREF_NOTIFY, true);
+		notifyStatus(this, notify ? "true" : "false");
 	}
 	
 	private void doSettings()

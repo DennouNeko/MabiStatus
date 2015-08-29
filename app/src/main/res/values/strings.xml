@@ -12,6 +12,9 @@
 	<string name="settings">Settings...</string>
 	<string name="menu_debug">Test</string>
 	
+	<string name="pref_notify">Notifications</string>
+	<string name="pref_notify_summ">Inform about server switching between Maint and Online</string>
+	
 	<string name="status_offline">Offline</string>
 	<string name="status_maint">Maint</string>
 	<string name="status_online">Online</string>
