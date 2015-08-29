@@ -69,6 +69,9 @@ public class MainActivity extends Activity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+		
+		PowerState.register(this);
+		
 		setContentView(R.layout.main);
         updateContent(false);
 		int[] items = {R.id.daily_today_tara, R.id.daily_today_tara_content,

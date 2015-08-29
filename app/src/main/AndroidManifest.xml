@@ -21,6 +21,8 @@
 			</intent-filter>
 			<meta-data android:name="android.appwidget.provider" android:resource="@xml/status_widget_info" />
 		</receiver>
+		<receiver android:name=".PowerState">
+		</receiver>
     </application>
 	
 	<uses-permission android:name="android.permission.INTERNET" />
