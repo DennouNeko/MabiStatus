@@ -16,6 +16,7 @@ import junit.framework.*;
 import android.net.*;
 import android.util.*;
 import android.nfc.*;
+import android.net.wifi.*;
 
 public class StatusWidgetProvider extends AppWidgetProvider
 {
@@ -24,6 +25,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 	
 	static PowerManager mPowerManager = null;
 	static PowerManager.WakeLock mWakeLock = null;
+	static WifiManager.WifiLock mWifiLock = null;
 	static public final int INTERVAL5 = 5 * 60 * 1000;
 	static public final int INTERVAL30 = 30 * 60 * 1000;
 	static private int mInterval = INTERVAL5;
@@ -73,6 +75,16 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			if(mWakeLock != null)
 			{
 				mWakeLock.acquire();
+			}
+			
+			WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+			if(wifi != null && mWifiLock == null)
+			{
+				mWifiLock = wifi.createWifiLock(tag + ".WifiLock");
+			}
+			if(mWifiLock != null)
+			{
+				mWifiLock.acquire();
 			}
 		}
 		catch(Exception e)
@@ -199,7 +211,12 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			ComponentName thisWidget = new ComponentName(mCtx, StatusWidgetProvider.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(mCtx);
 			manager.updateAppWidget(thisWidget, updateViews);
-			
+
+			if(mWifiLock != null)
+			{
+				mWifiLock.release();
+				mWifiLock = null;
+			}
 			if(mWakeLock != null)
 			{
 				mWakeLock.release();
