@@ -8,6 +8,7 @@ public class PowerState extends BroadcastReceiver
 	static boolean mPlugged = false;
 	static boolean mActive = false;
 	static PowerState mInstance = null;
+	boolean registered = false;
 	
 	private PowerState()
 	{
@@ -24,15 +25,29 @@ public class PowerState extends BroadcastReceiver
 	
 	public static void register(Context ctx)
 	{
-		IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
-		filter.addAction(Intent.ACTION_SCREEN_OFF);
-		filter.addAction(Intent.ACTION_POWER_CONNECTED);
-		filter.addAction(Intent.ACTION_POWER_DISCONNECTED);
 		PowerState rec = getInstance(ctx);
-		Intent last = ctx.registerReceiver(rec, filter);
-		if(last != null)
+		if(!rec.registered)
 		{
-			rec.onReceive(ctx, last);
+			IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+			filter.addAction(Intent.ACTION_SCREEN_OFF);
+			filter.addAction(Intent.ACTION_POWER_CONNECTED);
+			filter.addAction(Intent.ACTION_POWER_DISCONNECTED);
+			Intent last = ctx.registerReceiver(rec, filter);
+			rec.registered = true;
+			if(last != null)
+			{
+				rec.onReceive(ctx, last);
+			}
+		}
+	}
+	
+	public static void unregister(Context ctx)
+	{
+		PowerState rec = getInstance(ctx);
+		if(rec.registered)
+		{
+			ctx.unregisterReceiver(rec);
+			rec.registered = false;
 		}
 	}
 	

@@ -63,36 +63,53 @@ public class StatusWidgetProvider extends AppWidgetProvider
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
 	{
 		Log.v(tag, "onUpdate");
-		try
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+		boolean upsleep = pref.getBoolean(ConfigActivity.KEY_PREF_SLEEP_UPDATES, false);
+		boolean wifi = pref.getBoolean(ConfigActivity.KEY_PREF_WIFI, true);
+		boolean isMobile = MainActivity.isMobile(context);
+		if((upsleep || PowerState.isActive()) && (!wifi || !isMobile))
 		{
-			if(mPowerManager == null)
+			try
 			{
-				mPowerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+				if(mPowerManager == null)
+				{
+					mPowerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+				}
+				if(mPowerManager != null && mWakeLock == null)
+				{
+					mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Widget update");
+				}
+				if(mWakeLock != null)
+				{
+					mWakeLock.acquire();
+				}
+				
+				WifiManager wifiMgr = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+				if(wifiMgr != null && mWifiLock == null)
+				{
+					mWifiLock = wifiMgr.createWifiLock(tag + ".WifiLock");
+				}
+				if(mWifiLock != null)
+				{
+					mWifiLock.acquire();
+				}
 			}
-			if(mPowerManager != null && mWakeLock == null)
+			catch(Exception e)
 			{
-				mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Widget update");
+				e.printStackTrace();
 			}
-			if(mWakeLock != null)
-			{
-				mWakeLock.acquire();
-			}
+			new WidgetUpdater(context).execute();
+		}
+		else
+		{
+			Log.d(tag, "Ignoring update");
+			if(!upsleep && !PowerState.isActive())
+				Log.d(tag, "sleep mode");
 			
-			WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-			if(wifi != null && mWifiLock == null)
-			{
-				mWifiLock = wifi.createWifiLock(tag + ".WifiLock");
-			}
-			if(mWifiLock != null)
-			{
-				mWifiLock.acquire();
-			}
+			if(wifi && isMobile)
+				Log.d(tag, "mobile connection");
+				
 		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		new WidgetUpdater(context).execute();
 		setAlarm(context);
 	}
 	
@@ -187,7 +204,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			if(oldStatus != status)
 			{
 				SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mCtx);
-				boolean notify = pref.getBoolean(ConfigActivity.KEY_PREF_NOTIFY, true);
+				boolean notify = pref.getBoolean(ConfigActivity.KEY_PREF_NOTIFY, false);
 				
 				if(notify)
 				{

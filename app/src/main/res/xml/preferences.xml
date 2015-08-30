@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 	<CheckBoxPreference
+		android:key="pref_sleepUpdates"
+		android:title="@string/pref_sleepUpdates"
+		android:summary="@string/pref_sleepUpdates_summ"
+		android:defaultValue="false" />
+	<CheckBoxPreference
+		android:key="pref_wifi"
+		android:title="@string/pref_wifi"
+		android:summary="@string/pref_wifi_summ"
+		android:defaultValue="true" />
+	<CheckBoxPreference
 		android:key="pref_notify"
 		android:title="@string/pref_notify"
 		android:summary="@string/pref_notify_summ"
-		android:defaultValue="true" />
+		android:defaultValue="false" />
 </PreferenceScreen>

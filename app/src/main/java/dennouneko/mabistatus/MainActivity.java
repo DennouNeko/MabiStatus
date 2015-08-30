@@ -73,7 +73,7 @@ public class MainActivity extends Activity
     {
         super.onCreate(savedInstanceState);
 		
-		PowerState.register(this);
+		PowerState.register(getApplicationContext());
 		
 		setContentView(R.layout.main);
         updateContent(false);
@@ -163,13 +163,14 @@ public class MainActivity extends Activity
 	{
 		ConnectivityManager connMgr = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo info = connMgr.getActiveNetworkInfo();
-		return info != null && info.isConnected();
+		return info != null && info.isConnectedOrConnecting();
 	}
 	
 	public static boolean isMobile(Context ctx)
 	{
 		ConnectivityManager connMgr = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo info = connMgr.getActiveNetworkInfo();
+		Log.v(tag, "Network type = " + info.getTypeName());
 		switch(info.getType())
 		{
 		case ConnectivityManager.TYPE_MOBILE:
@@ -328,15 +329,19 @@ public class MainActivity extends Activity
 		sdfServer.setTimeZone(TimeZone.getTimeZone(serverTimezone));
 		mReqDate = sdfServer.format(now.getTime());
 		
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean wifi = pref.getBoolean(ConfigActivity.KEY_PREF_WIFI, true);
+		boolean mobile = MainActivity.isMobile(this);
+		
 		cacheDaily.load("cache_daily.json");
-		if(force || !mReqDate.equals(cacheDaily.getSignature()))
+		if(force || (!mReqDate.equals(cacheDaily.getSignature()) && (!wifi || !mobile)))
 		{
 			Log.v(tag, "Getting dailies for " + mReqDate);
 			(new MainUpdater(this)).execute(mReqDate);
 		}
 		else
 		{
-			Log.v(tag, "Using cached dailies for " + mReqDate);
+			Log.v(tag, "Using cached dailies for " + cacheDaily.getSignature());
 			try
 			{
 				JSONArray tmp = new JSONArray(cacheDaily.get());
