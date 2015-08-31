@@ -140,7 +140,7 @@ public class MainActivity extends Activity
 				updateContent(true);
 				return true;
 			case R.id.menu_refresh_widget:
-				StatusWidgetProvider.updateAllWidgets(this);
+				StatusWidgetProvider.updateAllWidgets(getApplicationContext());
 				return true;
 			case R.id.menu_settings:
 				doSettings();
