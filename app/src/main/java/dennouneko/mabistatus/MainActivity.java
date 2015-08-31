@@ -144,7 +144,7 @@ public class MainActivity extends Activity
 				return true;
 			case R.id.menu_settings:
 				doSettings();
-				break;
+				return true;
 			case R.id.menu_debug:
 				doTest();
 				return true;
