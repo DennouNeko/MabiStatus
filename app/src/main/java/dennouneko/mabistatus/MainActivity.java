@@ -163,9 +163,9 @@ public class MainActivity extends Activity
 			case R.id.menu_about:
 				showAbout();
 				return true;
-			case R.id.menu_debug:
+			/* case R.id.menu_debug:
 				doTest();
-				return true;
+				return true;//*/
 		}
 		return super.onOptionsItemSelected(item);
 	}

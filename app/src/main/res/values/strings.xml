@@ -12,7 +12,7 @@
 	<string name="refresh_widget">Update widget</string>
 	<string name="settings">Settings...</string>
 	<string name="about">About...</string>
-	<string name="menu_debug">Test</string>
+	<!--<string name="menu_debug">Test</string>-->
 	
 	<string name="pref_notify">Notifications</string>
 	<string name="pref_notify_summ">Inform about server switching between Maint and Online</string>

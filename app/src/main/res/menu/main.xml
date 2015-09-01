@@ -7,6 +7,6 @@
 		android:title="@string/settings"/>
 	<item android:id="@+id/menu_about"
 		android:title="@string/about" />
-	<item android:id="@+id/menu_debug"
-		android:title="@string/menu_debug" />
+	<!--<item android:id="@+id/menu_debug"
+		android:title="@string/menu_debug" />-->
 </menu>
