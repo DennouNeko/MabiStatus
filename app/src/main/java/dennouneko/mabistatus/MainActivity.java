@@ -42,6 +42,21 @@ public class MainActivity extends Activity
 		startActivity(config);
 	}
 	
+	public void showAbout()
+	{
+		Resources r = getResources();
+		String translator = r.getString(R.string.about_translator);
+		String appName = r.getString(R.string.app_name);
+		String message = appName + " by DennouNeko\n2015";
+		if(!translator.equals(""))
+		{
+			message += translator;
+		}
+		Toast t = Toast.makeText(this, message, Toast.LENGTH_LONG);
+		t.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 0);
+		t.show();
+	}
+	
 	public static void notifyStatus(Context ctx, String message)
 	{
 		Notification.Builder noti = new Notification.Builder(ctx)
@@ -144,6 +159,9 @@ public class MainActivity extends Activity
 				return true;
 			case R.id.menu_settings:
 				doSettings();
+				return true;
+			case R.id.menu_about:
+				showAbout();
 				return true;
 			case R.id.menu_debug:
 				doTest();

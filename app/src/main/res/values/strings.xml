@@ -3,6 +3,7 @@
     <string name="app_name">MabiStatus</string>
 	<string name="app_config_name">Settings</string>
 	<string name="widget_name">MabiWidget</string>
+	<string name="about_translator"><!-- a placeholder for text like "Translation: DennouNeko" --></string>
 	<string name="hello_world">Hello World!</string>
     <string name="daily_today_header">Today</string>
 	<string name="daily_tomorrow_header">Tomorrow</string>
@@ -10,6 +11,7 @@
 	<string name="refresh">Update info</string>
 	<string name="refresh_widget">Update widget</string>
 	<string name="settings">Settings...</string>
+	<string name="about">About...</string>
 	<string name="menu_debug">Test</string>
 	
 	<string name="pref_notify">Notifications</string>
