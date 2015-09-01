@@ -16,6 +16,7 @@ public class PowerState extends BroadcastReceiver
 	
 	public static PowerState getInstance(Context ctx)
 	{
+		// there can be only one
 		if(mInstance == null)
 		{
 			mInstance = new PowerState();
@@ -25,6 +26,7 @@ public class PowerState extends BroadcastReceiver
 	
 	public static void register(Context ctx)
 	{
+		// register as broadcast receiver
 		PowerState rec = getInstance(ctx);
 		if(!rec.registered)
 		{
@@ -54,6 +56,7 @@ public class PowerState extends BroadcastReceiver
 	@Override
 	public void onReceive(Context context, Intent intent)
 	{
+		// process received intent and update device state
 		if(intent.getAction().equals(Intent.ACTION_SCREEN_OFF))
 		{
 			Log.v(tag, "Screen: OFF");

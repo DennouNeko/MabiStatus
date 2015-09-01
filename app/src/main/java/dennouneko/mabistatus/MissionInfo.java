@@ -1,5 +1,6 @@
 package dennouneko.mabistatus;
 
+// simple helper class representing single mission data
 public class MissionInfo
 {
 	String name = "?";

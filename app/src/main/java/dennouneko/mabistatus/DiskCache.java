@@ -26,6 +26,7 @@ public class DiskCache
 
 		try
 		{
+			// load the whole cache file
 			fh = new FileReader(mName.getAbsolutePath());
 			String data = "";
 			StringBuffer out = new StringBuffer();
@@ -37,6 +38,7 @@ public class DiskCache
 				out.append(buf, 0, rds);
 			}
 			data = out.toString();
+			// parse the data
 			JSONObject temp = new JSONObject(data);
 
 			mSignature = temp.getString("signature");
@@ -54,6 +56,7 @@ public class DiskCache
 		{
 			try
 			{
+				// cleanup
 				if(fh != null)
 				{
 					fh.close();
@@ -128,6 +131,7 @@ public class DiskCache
 	
 	public void flush()
 	{
+		// write current state back to original file
 		FileWriter fh = null;
 		if(mData == null)
 		{
@@ -137,6 +141,7 @@ public class DiskCache
 		{
 			Log.v(tag, mName.getAbsolutePath());
 			fh = new FileWriter(mName.getAbsolutePath());
+			// build the "carrier" object
 			JSONObject temp = new JSONObject();
 			temp.accumulate("signature", mSignature);
 			temp.accumulate("data", mData);
@@ -150,6 +155,7 @@ public class DiskCache
 		{
 			try
 			{
+				// cleanup
 				if(fh != null)
 				{
 					fh.close();

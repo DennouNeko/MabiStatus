@@ -4,6 +4,7 @@ import org.xml.sax.helpers.*;
 import org.xml.sax.*;
 import android.util.*;
 
+// the mission data parser
 public class MissionInfoHandler extends DefaultHandler
 {
 	private static final String tag = "MissionInfoHandler";
@@ -19,6 +20,7 @@ public class MissionInfoHandler extends DefaultHandler
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException
 	{
+		// called to collect a string beteen <tags> </tags>
 		if(curElem)
 		{
 			curValue = curValue + new String(ch, start, length);
@@ -31,6 +33,7 @@ public class MissionInfoHandler extends DefaultHandler
 		curElem = false;
 		curValue = curValue.trim();
 		
+		// check for a known tag
 		if(qName.equals("name"))
 		{
 			curMission.setName(curValue);
@@ -72,6 +75,7 @@ public class MissionInfoHandler extends DefaultHandler
 	{
 		curElem = true;
 		
+		// check for a known tag
 		if(qName.equals("details"))
 		{
 			data = new HashMap<String, MissionInfo>();
@@ -101,6 +105,7 @@ public class MissionInfoHandler extends DefaultHandler
 	
 	public static MissionInfoHandler getInstance()
 	{
+		// there can be only one
 		if(mInstance == null)
 		{
 			mInstance = new MissionInfoHandler();
