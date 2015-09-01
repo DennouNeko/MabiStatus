@@ -33,6 +33,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 	
 	public static void setAlarm(Context context)
 	{
+		// prepare update event
 		PendingIntent update = getUpdateIntent(context);
 		AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 		mgr.cancel(update); // just to make sure we aren't adding infinite alarms
@@ -42,6 +43,9 @@ public class StatusWidgetProvider extends AppWidgetProvider
 	
 	public static PendingIntent getUpdateIntent(Context context)
 	{
+		// unified update intent
+		// to make sure the AlarmMsnager
+		// can find and cancel event
 		AppWidgetManager manager = AppWidgetManager.getInstance(context);
 		ComponentName providerName = new ComponentName(context, StatusWidgetProvider.class);
 		int[] ids = manager.getAppWidgetIds(providerName);
@@ -54,6 +58,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 	@Override
 	public void onEnabled(Context context)
 	{
+		// initial update
 		Log.d(tag, "onEnabled");
 		setAlarm(context);
 		updateAllWidgets(context);
@@ -67,10 +72,13 @@ public class StatusWidgetProvider extends AppWidgetProvider
 		boolean upsleep = pref.getBoolean(ConfigActivity.KEY_PREF_SLEEP_UPDATES, false);
 		boolean wifi = pref.getBoolean(ConfigActivity.KEY_PREF_WIFI, true);
 		boolean isMobile = MainActivity.isMobile(context);
+		// start update, respecting user settings
 		if((upsleep || PowerState.isActive()) && (!wifi || !isMobile))
 		{
 			try
 			{
+				// WakeLock - making sure cpu won't go to sleep
+				// while we're updating
 				if(mPowerManager == null)
 				{
 					mPowerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
@@ -84,6 +92,8 @@ public class StatusWidgetProvider extends AppWidgetProvider
 					mWakeLock.acquire();
 				}
 				
+				// WifiLock - keeping connection alive
+				// if possible
 				WifiManager wifiMgr = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
 				if(wifiMgr != null && mWifiLock == null)
 				{
@@ -98,6 +108,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			{
 				e.printStackTrace();
 			}
+			// perform actual update in separate thread
 			new WidgetUpdater(context).execute();
 		}
 		else
@@ -110,11 +121,13 @@ public class StatusWidgetProvider extends AppWidgetProvider
 				Log.d(tag, "mobile connection");
 				
 		}
+		// schedule another update
 		setAlarm(context);
 	}
 	
 	public static void updateAllWidgets(Context ctx)
 	{
+		// force update, ignoring settings
 		Log.v(tag, "Forcing widget update");
 		new WidgetUpdater(ctx).execute();
 	}
@@ -145,6 +158,8 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			int patch = 0;
 			int login = 0;
 			
+			// retry ip to 5 times, in case
+			// network needs time for startup
 			for(int t = 0; t < 5; t++)
 			{
 				if(t > 0)
@@ -170,6 +185,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 				}//*/
 				if(patch != 0x0f || login != 0x0f)
 				{
+					// at least one of replies was valid
 					break;
 				}
 			}
@@ -185,18 +201,23 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			int login = (result >> 4) & 0x0f;
 			int status = 0;
 			
+			// analyze result
 			if((login > 0 && login < 0x0f && patch == 1) || (patch > 0 && patch < 0x0f && login == 1))
 			{
+				// at least one of servers is in maint mode
 				res = R.string.status_maint;
 				status = 1;
 				mInterval = INTERVAL5;
 			}
 			else if(patch == 2 && login == 2)
 			{
+				// both servers are alive
 				res = R.string.status_online;
 				status = 2;
 				mInterval = INTERVAL30;
 			}
+			
+			// push result to the widget
 			String resultText = mCtx.getResources().getText(res).toString();
 			
 			int oldStatus = getCurStatus();
@@ -206,14 +227,18 @@ public class StatusWidgetProvider extends AppWidgetProvider
 				SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mCtx);
 				boolean notify = pref.getBoolean(ConfigActivity.KEY_PREF_NOTIFY, false);
 				
+				// check if we have anything to notify about,
+				// respecting settings
 				if(notify)
 				{
 					if(oldStatus == 2 && status == 1)
 					{
+						// online -> maint
 						MainActivity.notifyStatus(mCtx, R.string.message_maintenance);
 					}
 					else if(oldStatus == 1 && status == 2)
 					{
+						// maint -> online
 						MainActivity.notifyStatus(mCtx, R.string.message_online);
 					}
 				}
@@ -235,7 +260,9 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			ComponentName thisWidget = new ComponentName(mCtx, StatusWidgetProvider.class);
 			AppWidgetManager manager = AppWidgetManager.getInstance(mCtx);
 			manager.updateAppWidget(thisWidget, updateViews);
-
+			
+			// cpu can go to sleep now
+			// release any locks we've acquired
 			if(mWifiLock != null)
 			{
 				mWifiLock.release();

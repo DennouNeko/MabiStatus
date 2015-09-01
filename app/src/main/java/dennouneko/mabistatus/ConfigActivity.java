@@ -12,6 +12,7 @@ public class ConfigActivity extends PreferenceActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
+		// update the config view with xml data
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences);
 	}

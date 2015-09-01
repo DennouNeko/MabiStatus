@@ -31,6 +31,7 @@ public class MainActivity extends Activity
 	
 	private void doTest()
 	{
+		// nothing interesting here
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean notify = pref.getBoolean(ConfigActivity.KEY_PREF_NOTIFY, true);
 		notifyStatus(this, notify ? "true" : "false");
@@ -38,12 +39,14 @@ public class MainActivity extends Activity
 	
 	private void doSettings()
 	{
+		// show the settings activity
 		Intent config = new Intent(this, ConfigActivity.class);
 		startActivity(config);
 	}
 	
 	public void showAbout()
 	{
+		// display an "about" toast
 		Resources r = getResources();
 		String translator = r.getString(R.string.about_translator);
 		String appName = r.getString(R.string.app_name);
@@ -59,6 +62,7 @@ public class MainActivity extends Activity
 	
 	public static void notifyStatus(Context ctx, String message)
 	{
+		// helper function for notifications
 		Notification.Builder noti = new Notification.Builder(ctx)
 			.setContentTitle("Mabinogi Server Status")
 			.setContentText(message)
@@ -88,8 +92,10 @@ public class MainActivity extends Activity
     {
         super.onCreate(savedInstanceState);
 		
+		// register the power state listener
 		PowerState.register(getApplicationContext());
 		
+		// set activity layout
 		setContentView(R.layout.main);
         updateContent(false);
 		int[] items = {R.id.daily_today_tara, R.id.daily_today_tara_content,
@@ -101,6 +107,7 @@ public class MainActivity extends Activity
 	
 	private void makeToggle(int elem, int content)
 	{
+		// helper function to make single item togglable
 		View src = findViewById(elem);
 		final View dst = findViewById(content);
 		
@@ -122,6 +129,8 @@ public class MainActivity extends Activity
 	
 	private void makeToggleGroup(final int[] items)
 	{
+		// helper funtion to make a toggle group
+		// max one of items is visible at any time
 		for(int j = 0; j < items.length; j += 2)
 		{
 			final int elem = items[j];
@@ -149,6 +158,7 @@ public class MainActivity extends Activity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
+		// menu click handler
 		switch(item.getItemId())
 		{
 			case R.id.menu_refresh:
@@ -173,12 +183,14 @@ public class MainActivity extends Activity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
+		// show menu
 		getMenuInflater().inflate(R.menu.main, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 	
 	public static boolean isConnected(Context ctx)
 	{
+		// helper function for checking network state
 		ConnectivityManager connMgr = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo info = connMgr.getActiveNetworkInfo();
 		return info != null && info.isConnectedOrConnecting();
@@ -186,6 +198,7 @@ public class MainActivity extends Activity
 	
 	public static boolean isMobile(Context ctx)
 	{
+		// helper function for checking connection type
 		ConnectivityManager connMgr = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo info = connMgr.getActiveNetworkInfo();
 		Log.v(tag, "Network type = " + info.getTypeName());
@@ -200,6 +213,8 @@ public class MainActivity extends Activity
 	
 	private RelativeLayout.LayoutParams makeBelow(int id)
 	{
+		// layout helper function
+		// puts one item below another
 		RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(
 			LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		param.addRule(RelativeLayout.BELOW, id);
@@ -208,18 +223,23 @@ public class MainActivity extends Activity
 
 	private void updateDetails(RelativeLayout view, MissionInfo data)
 	{
+		// clear layout
 		view.removeAllViewsInLayout();
+		
+		// add party size info
 		TextView players = new TextView(this);
 		players.setId(view.generateViewId());
 		players.setText("Party size: " + data.getPlayers());
 		view.addView(players);
-
+		
+		// add duration/time limit
 		TextView time = new TextView(this);
 		time.setLayoutParams(makeBelow(players.getId()));
 		time.setId(view.generateViewId());
 		time.setText((data.isTimeLimit() ? "Time limit: " : "Time: ") + data.getTime());
 		view.addView(time);
-
+		
+		// add rewards
 		TableLayout rewards = new TableLayout(this);
 		RelativeLayout.LayoutParams rewardsParams = makeBelow(time.getId());
 		rewardsParams.width = LayoutParams.FILL_PARENT;
@@ -270,7 +290,8 @@ public class MainActivity extends Activity
 			rewards.addView(row);
 		}
 		view.addView(rewards);
-
+		
+		// add extra info, if there is any
 		String info = data.getInfo();
 		if(info != null && !info.equals(""))
 		{
@@ -284,17 +305,20 @@ public class MainActivity extends Activity
 
 	private void updateDaily(String name, int header, int details)
 	{
+		// update info for a single daily mission
 		MissionInfo info = getMissionInfo(name);
 		TextView tvHeader = (TextView)findViewById(header);
 		RelativeLayout tvDetails = (RelativeLayout)findViewById(details);
 
 		if(info != null)
 		{
+			// if there are any details for given mission
 			tvHeader.setText(info.getName());
 			updateDetails(tvDetails, info);
 		}
 		else
 		{
+			// missingno
 			tvHeader.setText(name);
 			tvDetails.removeAllViewsInLayout();
 		}
@@ -302,6 +326,7 @@ public class MainActivity extends Activity
 	
 	private void updateDailyInfo(JSONArray result)
 	{
+		// process data and perform update
 		TextView t = (TextView)findViewById(R.id.message);
 		try
 		{
@@ -311,6 +336,7 @@ public class MainActivity extends Activity
 				t.setText(mReqDate);
 				if(!result.isNull(0))
 				{
+					// got data for "today"
 					JSONObject daily = result.getJSONObject(0);
 					String tara = daily.getJSONObject("Tara").getJSONObject("normal").getString("name");
 					String tail = daily.getJSONObject("Taillteann").getJSONObject("normal").getString("name");
@@ -319,6 +345,7 @@ public class MainActivity extends Activity
 				}
 				if(!result.isNull(1))
 				{
+					// got data for "tomorrow"
 					JSONObject daily = result.getJSONObject(1);
 					String tara = daily.getJSONObject("Tara").getJSONObject("normal").getString("name");
 					String tail = daily.getJSONObject("Taillteann").getJSONObject("normal").getString("name");
@@ -328,6 +355,7 @@ public class MainActivity extends Activity
 			}
 			else
 			{
+				// invalid data
 				t.setText("Offline");
 			}
 		}
@@ -339,8 +367,7 @@ public class MainActivity extends Activity
 	
 	public void updateContent(boolean force)
 	{
-		// TextView t = (TextView)findViewById(R.id.message);
-		// t.setText(isConnected(this) ? (isMobile(this) ? "Mobile" : "Wideband") : "Disconnected");
+		// prepare the "current daily date"
 		Calendar now = Calendar.getInstance();
 		now.add(Calendar.HOUR, -7);
 		SimpleDateFormat sdfServer = new SimpleDateFormat("yyyy-MM-dd");
@@ -351,6 +378,8 @@ public class MainActivity extends Activity
 		boolean wifi = pref.getBoolean(ConfigActivity.KEY_PREF_WIFI, true);
 		boolean mobile = MainActivity.isMobile(this);
 		
+		// perform update respecting preferences
+		// and cached data, unless user forced update
 		cacheDaily.load("cache_daily.json");
 		if(force || (!mReqDate.equals(cacheDaily.getSignature()) && (!wifi || !mobile)))
 		{
@@ -374,8 +403,11 @@ public class MainActivity extends Activity
 	
 	private MissionInfo getMissionInfo(String name)
 	{
+		// helper funtion for retrieving mission details from
+		// embedded database
 		MissionInfoHandler mih = MissionInfoHandler.getInstance();
 		
+		// liad data if we haven't done it yet
 		if(!mih.isLoaded())
 		{
 			AssetManager assets = getBaseContext().getAssets();
@@ -406,6 +438,7 @@ public class MainActivity extends Activity
 		@Override
 		protected void onPreExecute()
 		{
+			// let user know we have started update
 			TextView t = (TextView)findViewById(R.id.message);
 			t.setVisibility(View.VISIBLE);
 			t.setText(R.string.message_loading);
@@ -421,6 +454,7 @@ public class MainActivity extends Activity
 		{
 			JSONArray data = null;
 			
+			// no need to re-check settings here
 			if(isConnected(mCtx))
 			{
 				MyHTTP http = MyHTTP.getInstance();
@@ -438,6 +472,7 @@ public class MainActivity extends Activity
 		{
 			if(result != null)
 			{
+				// update cache, if we got a result
 				cacheDaily.putSignature(mReqDate);
 				cacheDaily.put(result.toString());
 				cacheDaily.flush();

@@ -49,6 +49,7 @@ public class MyHTTP
 			if(argString != null && !argString.equals(""))
 				reqUrl += "?" + argString;
 			URL url = new URL(reqUrl);
+			// prepare connection
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 			Log.d(tag, "Setting up params");
 			conn.setReadTimeout(10000);
@@ -59,6 +60,7 @@ public class MyHTTP
 			// start of query
 			Log.d(tag, "Sending query");
 			conn.connect();
+			// read result
 			int code = conn.getResponseCode();
 			Log.d(tag, "Response code: " + code);
 			
@@ -69,6 +71,7 @@ public class MyHTTP
 		}
 		finally
 		{
+			// cleanup
 			if(is != null)
 			{
 				is.close();
@@ -87,6 +90,7 @@ public class MyHTTP
 		{
 			Log.d(tag, "Starting POST request");
 			URL url = new URL(src);
+			// prepare connection
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 			Log.d(tag, "Setting up params");
 			conn.setReadTimeout(10000);
@@ -105,6 +109,7 @@ public class MyHTTP
 			// start of query
 			Log.d(tag, "Sending query");
 			conn.connect();
+			// read result
 			int code = conn.getResponseCode();
 			Log.d(tag, "Response code: " + code);
 
@@ -115,6 +120,7 @@ public class MyHTTP
 		}
 		finally
 		{
+			// cleanup
 			if(is != null)
 			{
 				is.close();
@@ -134,13 +140,15 @@ public class MyHTTP
 		StringBuilder ret = new StringBuilder();
 		boolean first = true;
 		
-		if(args == null)
+		if(args == null || args.size() == 0)
 		{
+			// no args = nothing to do
 			return "";
 		}
 		
 		try
 		{
+			// encode and concat the args
 			for(NameValuePair nv : args)
 			{
 				if(first) first = false;
@@ -165,6 +173,7 @@ public class MyHTTP
 		reader = new InputStreamReader(is, "UTF-8");
 		if(len < 0)
 		{
+			// read all
 			StringBuffer out = new StringBuffer();
 			char[] buffer = new char[1024];
 			for(;;)
@@ -177,6 +186,7 @@ public class MyHTTP
 		}
 		else
 		{
+			// read specified count of characters
 			char[] buf = new char[len];
 			reader.read(buf);
 			return new String(buf);
@@ -185,6 +195,7 @@ public class MyHTTP
 	
 	public static void writeIt(OutputStream os, String data) throws IOException, UnsupportedEncodingException
 	{
+		// put whole string to output buffer
 		OutputStreamWriter writer = new OutputStreamWriter(os, "UTF-8");
 		writer.write(data);
 		writer.flush();
@@ -197,16 +208,20 @@ public class MyHTTP
 		int ret = 0;
 		try
 		{
+			// fetch patch.txt from patch server
 			result = getData(urlPatch, null);
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
+			// connection error
 			return -1;
 		}
 		
 		Log.v(tag, "Response:\n" + result);
 		
+		// parse result - split into lines
+		// and separate name from value
 		String parts[] = result.split("\n");
 		HashMap<String, String> data = new HashMap<String, String>();
 
@@ -215,7 +230,8 @@ public class MyHTTP
 			String pt[] = line.trim().split("=", 2);
 			if(pt.length > 1) data.put(pt[0], pt[1]);
 		}
-
+		
+		// only one line is important
 		String patchAccept = data.get("patch_accept");
 		
 		if(patchAccept != null)
@@ -223,15 +239,18 @@ public class MyHTTP
 			Log.d(tag, "patch_accept = " + patchAccept);
 			if(patchAccept.equals("0"))
 			{
+				// maintenance
 				ret = 1;
 			}
 			else if(patchAccept.equals("1"))
 			{
+				// online
 				ret = 2;
 			}
 		}
 		else
 		{
+			// no error, but couldn't find info in file
 			Log.d(tag, "patchAccept is undefined!");
 			ret = 0;
 		}
@@ -244,6 +263,7 @@ public class MyHTTP
 		String result = "";
 		int ret = 0;
 		
+		// for some reason it often fails at first try
 		for(int t = 0; t < 3; t++)
 		{
 			try
@@ -257,6 +277,8 @@ public class MyHTTP
 			}
 			if(!result.equals(""))
 			{
+				// managed to get data after all
+				// make surr we're not in error state
 				ret = 0;
 				break;
 			}
@@ -267,6 +289,7 @@ public class MyHTTP
 		
 		try
 		{
+			// extract important data
 			JSONObject temp = new JSONObject(result);
 			ret = temp.getBoolean("IsMaintenance") ? 1 : 2;
 		}
@@ -288,6 +311,8 @@ public class MyHTTP
 		
 		try
 		{
+			// fetch mission list from extenal site
+			// Warning: Mission names are in Korean
 			Log.d(tag, "Dailies from " + src);
 			result = getData(src, null);
 		}
@@ -298,6 +323,7 @@ public class MyHTTP
 		
 		try
 		{
+			// parse result
 			ret = new JSONArray(result);
 		}
 		catch(Exception e)
