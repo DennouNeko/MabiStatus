@@ -27,6 +27,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 	static PowerManager mPowerManager = null;
 	static PowerManager.WakeLock mWakeLock = null;
 	static WifiManager.WifiLock mWifiLock = null;
+	static public final int INTERVAL1 = 1 * 60 * 1000;
 	static public final int INTERVAL5 = 5 * 60 * 1000;
 	static public final int INTERVAL30 = 30 * 60 * 1000;
 	static private int mInterval = INTERVAL5;
@@ -121,7 +122,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 				Log.d(tag, "mobile connection");
 				
 		}
-		// schedule another update
+		// schedule another update, in case something went wrong
 		setAlarm(context);
 	}
 	
@@ -216,6 +217,13 @@ public class StatusWidgetProvider extends AppWidgetProvider
 				status = 2;
 				mInterval = INTERVAL30;
 			}
+			else if(patch == 0x0f || login == 0x0f)
+			{
+				// Something went wrong...
+				mInterval = INTERVAL1;
+			}
+			// update the timer
+			setAlarm(mCtx);
 			
 			// push result to the widget
 			String resultText = mCtx.getResources().getText(res).toString();
