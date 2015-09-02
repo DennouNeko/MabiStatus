@@ -200,7 +200,9 @@ public class MainActivity extends Activity
 	{
 		// helper function for checking connection type
 		ConnectivityManager connMgr = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if(connMgr == null) return true; // no service, assume it's low-speed transfer
 		NetworkInfo info = connMgr.getActiveNetworkInfo();
+		if(info == null) return true;
 		Log.v(tag, "Network type = " + info.getTypeName());
 		switch(info.getType())
 		{
