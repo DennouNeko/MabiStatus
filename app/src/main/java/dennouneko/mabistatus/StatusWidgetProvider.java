@@ -147,6 +147,14 @@ public class StatusWidgetProvider extends AppWidgetProvider
 	{
 		private Context mCtx;
 		private static final String tag = "StatusWidgetProvider$WidgetUpdater";
+
+		@Override
+		protected void onPreExecute()
+		{
+			RemoteViews updateViews = new RemoteViews(mCtx.getPackageName(), R.layout.status_appwidget);
+			updateViews.setTextViewText(R.id.status_login, "...");
+			updateView(updateViews);
+		}
 		
 		public WidgetUpdater(Context ctx)
 		{
@@ -260,14 +268,7 @@ public class StatusWidgetProvider extends AppWidgetProvider
 			RemoteViews updateViews = new RemoteViews(mCtx.getPackageName(), R.layout.status_appwidget);
 			updateViews.setTextViewText(R.id.status_login, resultText);
 
-			Intent intent = new Intent(mCtx, MainActivity.class);
-			PendingIntent pendingIntent = PendingIntent.getActivity(mCtx, 0, intent, 0);
-			updateViews.setOnClickPendingIntent(R.id.widget_content, pendingIntent);
-			
-			// push the update to home screen
-			ComponentName thisWidget = new ComponentName(mCtx, StatusWidgetProvider.class);
-			AppWidgetManager manager = AppWidgetManager.getInstance(mCtx);
-			manager.updateAppWidget(thisWidget, updateViews);
+			updateView(updateViews);
 			
 			// cpu can go to sleep now
 			// release any locks we've acquired
@@ -281,6 +282,18 @@ public class StatusWidgetProvider extends AppWidgetProvider
 				mWakeLock.release();
 				mWakeLock = null;
 			}
+		}
+		
+		private void updateView(RemoteViews data)
+		{
+			Intent intent = new Intent(mCtx, MainActivity.class);
+			PendingIntent pendingIntent = PendingIntent.getActivity(mCtx, 0, intent, 0);
+			data.setOnClickPendingIntent(R.id.widget_content, pendingIntent);
+
+			// push the update to home screen
+			ComponentName thisWidget = new ComponentName(mCtx, StatusWidgetProvider.class);
+			AppWidgetManager manager = AppWidgetManager.getInstance(mCtx);
+			manager.updateAppWidget(thisWidget, data);
 		}
 	}
 }
